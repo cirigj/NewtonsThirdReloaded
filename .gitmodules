@@ -1,0 +1,3 @@
+[submodule "Assets/Plugins/JBirdEngine"]
+	path = Assets/Plugins/JBirdEngine
+	url = https://github.com/cirigj/JBirdEngine.git
