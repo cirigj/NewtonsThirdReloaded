@@ -7,11 +7,11 @@ public class ShipController : MonoBehaviour {
     public Ship ship;
 
     public virtual void WeaponTrigger () {
-
+        ship.ActivateWeapon();
     }
 
     public virtual void WeaponRelease () {
-
+        ship.DeactivateWeapon();
     }
 
     public virtual void AbilityTrigger () {
@@ -23,11 +23,11 @@ public class ShipController : MonoBehaviour {
     }
 
     public virtual void EngineTrigger () {
-
+        ship.ActivateThruster();
     }
 
     public virtual void EngineRelease () {
-
+        ship.DeactivateThruster();
     }
 
     public virtual void GotoYaw (float x, float y) {
