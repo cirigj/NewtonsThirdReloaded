@@ -45,6 +45,12 @@ public class Ship : MonoBehaviour {
     [EnumHelper.EnumFlags]
     public ShieldModifiers shieldMods;
 
+    [Header("RCS Thrusters")]
+    public Engine rightSideThruster;
+    public Engine leftSideThruster;
+    public Engine frontRightThruster;
+    public Engine frontLeftThruster;
+
     [Header("Anchor Points")]
     public PartAnchor mainWeaponAnchor;
     public PartAnchor spreadWeaponAnchor;
@@ -120,7 +126,47 @@ public class Ship : MonoBehaviour {
     }
 
     public void AdjustThrustFromFriction () {
-        thrustVelocity *= (1 - friction);
+        // left rcs
+        float leftThrustComponent = Vector3.Dot(thrustVelocity, -transform.right);
+        if (leftThrustComponent > 0.01f) {
+            Vector3 leftThrust = leftSideThruster.GetDeltaThrust(mass);
+            if (leftThrust.magnitude > leftThrustComponent) {
+                leftThrust = leftThrust.normalized * leftThrustComponent;
+            }
+            thrustVelocity += leftThrust;
+            leftSideThruster.TurnOnParticles();
+        }
+        else {
+            leftSideThruster.TurnOffParticles();
+        }
+        // right rcs
+        float rightThrustComponent = Vector3.Dot(thrustVelocity, transform.right);
+        if (rightThrustComponent > 0.01f) {
+            Vector3 rightThrust = rightSideThruster.GetDeltaThrust(mass);
+            if (rightThrust.magnitude > rightThrustComponent) {
+                rightThrust = rightThrust.normalized * rightThrustComponent;
+            }
+            thrustVelocity += rightThrust;
+            rightSideThruster.TurnOnParticles();
+        }
+        else {
+            rightSideThruster.TurnOffParticles();
+        }
+        // forward rcs
+        float frontThrustComponent = Vector3.Dot(thrustVelocity, transform.forward);
+        if (frontThrustComponent > 0.01f && !mainThrusterActive) {
+            Vector3 frontThrust = frontLeftThruster.GetDeltaThrust(mass) + frontRightThruster.GetDeltaThrust(mass);
+            if (frontThrust.magnitude > frontThrustComponent) {
+                frontThrust = frontThrust.normalized * frontThrustComponent;
+            }
+            thrustVelocity += frontThrust;
+            frontLeftThruster.TurnOnParticles();
+            frontRightThruster.TurnOnParticles();
+        }
+        else {
+            frontLeftThruster.TurnOffParticles();
+            frontRightThruster.TurnOffParticles();
+        }
     }
 
     public void MoveFromThrust() {
@@ -128,10 +174,12 @@ public class Ship : MonoBehaviour {
     }
 
     public void ActivateThruster () {
+        engine.TurnOnParticles();
         mainThrusterActive = true;
     }
 
     public void DeactivateThruster () {
+        engine.TurnOffParticles();
         mainThrusterActive = false;
     }
 

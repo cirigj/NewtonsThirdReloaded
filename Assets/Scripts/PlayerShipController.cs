@@ -38,6 +38,8 @@ public class ShipController : MonoBehaviour {
 
 public class PlayerShipController : ShipController {
 
+    public float yawDeadzone;
+
     [SerializeField]
     [JBirdEngine.EditorHelper.ViewOnly]
     private bool fireControl;
@@ -63,7 +65,8 @@ public class PlayerShipController : ShipController {
         float ability = Input.GetAxis("Ability");
 
         // Yaw Control
-        if (yawH != 0f || yawV != 0f) {
+        if (yawH >= yawDeadzone || yawH <= -yawDeadzone
+         || yawV >= yawDeadzone || yawV <= -yawDeadzone) {
             GotoYaw(yawH, yawV);
         }
 

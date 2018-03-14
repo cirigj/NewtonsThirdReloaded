@@ -16,6 +16,7 @@ public class Engine : MonoBehaviour {
     [Header("Runtime")]
     public float overheat;
     public float cooldown;
+    public List<ParticleSystem> particles;
 
     void Update () {
         if (cooldown > 0f) {
@@ -43,6 +44,14 @@ public class Engine : MonoBehaviour {
     public void OverheatFromThrust (Vector3 deltaThrust) {
         overheat = Mathf.Clamp(overheat + (deltaThrust.magnitude / thrust) * overheatRate, 0f, overheatTime);
         cooldown = overheatCooldown;
+    }
+
+    public void TurnOnParticles () {
+        particles.ForEach(p => p.Play());
+    }
+
+    public void TurnOffParticles () {
+        particles.ForEach(p => p.Stop());
     }
 
 }
