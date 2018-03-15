@@ -6,31 +6,39 @@ public class ShipController : MonoBehaviour {
 
     public Ship ship;
 
-    public virtual void WeaponTrigger () {
+    protected void WeaponTrigger () {
         ship.ActivateWeapon();
     }
 
-    public virtual void WeaponRelease () {
+    protected void WeaponRelease () {
         ship.DeactivateWeapon();
     }
 
-    public virtual void AbilityTrigger () {
-
-    }
-    
-    public virtual void AbilityRelease () {
+    protected void AbilityTrigger () {
 
     }
 
-    public virtual void EngineTrigger () {
+    protected void AbilityRelease () {
+
+    }
+
+    protected void EngineTrigger () {
         ship.ActivateThruster();
     }
 
-    public virtual void EngineRelease () {
+    protected void EngineRelease () {
         ship.DeactivateThruster();
     }
 
-    public virtual void GotoYaw (float x, float y) {
+    protected void DriftTrigger () {
+        ship.ActivateDrift();
+    }
+
+    protected void DriftRelease () {
+        ship.DeactivateDrift();
+    }
+
+    protected void GotoYaw (float x, float y) {
         ship.SetTargetYaw(new Vector2(x, y));
     }
 
@@ -50,6 +58,10 @@ public class PlayerShipController : ShipController {
 
     [SerializeField]
     [JBirdEngine.EditorHelper.ViewOnly]
+    private bool driftControl;
+
+    [SerializeField]
+    [JBirdEngine.EditorHelper.ViewOnly]
     private bool abilityControl;
 
     void Update () {
@@ -63,6 +75,7 @@ public class PlayerShipController : ShipController {
         float fire = Input.GetAxis("Fire");
         float thrust = Input.GetAxis("Thrust");
         float ability = Input.GetAxis("Ability");
+        float drift = Input.GetAxis("Drift");
 
         // Yaw Control
         if (yawH >= yawDeadzone || yawH <= -yawDeadzone
@@ -95,6 +108,20 @@ public class PlayerShipController : ShipController {
             if (thrust <= 0) {
                 thrustControl = false;
                 EngineRelease();
+            }
+        }
+
+        // Drift Trigger/Release
+        if (!driftControl) {
+            if (drift > 0) {
+                driftControl = true;
+                DriftTrigger();
+            }
+        }
+        else {
+            if (drift <= 0) {
+                driftControl = false;
+                DriftRelease();
             }
         }
 

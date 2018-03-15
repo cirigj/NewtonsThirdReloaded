@@ -28,6 +28,7 @@ public class Ship : MonoBehaviour {
     [Header("Ship Stats")]
     public float mass;
     public float maxSpeed;
+    public float maxHealth;
 
     [Header("Ship Mods")]
     [EnumHelper.EnumFlags]
@@ -50,6 +51,8 @@ public class Ship : MonoBehaviour {
     public Engine leftSideThruster;
     public Engine frontRightThruster;
     public Engine frontLeftThruster;
+    public Engine backRightThruster;
+    public Engine backLeftThruster;
 
     [Header("Anchor Points")]
     public PartAnchor mainWeaponAnchor;
@@ -65,10 +68,12 @@ public class Ship : MonoBehaviour {
     public float friction;
 
     [Header("Runtime")]
+    public float health;
     public Vector2 targetYaw;
     public Vector3 thrustVelocity;
     public bool mainThrusterActive;
     public bool mainWeaponActive;
+    public bool driftActive;
 
     void FixedUpdate () {
         // Turn first, for accuracy
@@ -79,6 +84,8 @@ public class Ship : MonoBehaviour {
         CalculateTotalThrust();
         AdjustThrustFromFriction();
         MoveFromThrust();
+        // Overheat Damage
+        CalculateOverheatDamage();
     }
 
     public void SetTargetYaw (Vector2 yaw) {
@@ -106,7 +113,7 @@ public class Ship : MonoBehaviour {
                 engine.OverheatFromThrust(-kickback);
                 kickback = Vector3.zero;
             }
-            else {
+            else if (mitigation.magnitude > 0f){
                 engine.OverheatFromThrust(mitigation);
                 kickback += mitigation;
             }
@@ -117,6 +124,12 @@ public class Ship : MonoBehaviour {
     public void CalculateTotalThrust () {
         if (mainThrusterActive) {
             Vector3 deltaThrust = engine.GetDeltaThrust(mass);
+            if (deltaThrust.magnitude > 0f) {
+                engine.TurnOnParticles();
+            }
+            else {
+                engine.TurnOffParticles();
+            }
             thrustVelocity += deltaThrust;
             engine.OverheatFromThrust(deltaThrust);
         }
@@ -128,7 +141,7 @@ public class Ship : MonoBehaviour {
     public void AdjustThrustFromFriction () {
         // left rcs
         float leftThrustComponent = Vector3.Dot(thrustVelocity, -transform.right);
-        if (leftThrustComponent > 0.01f) {
+        if (driftActive && leftThrustComponent > 0.01f) {
             Vector3 leftThrust = leftSideThruster.GetDeltaThrust(mass);
             if (leftThrust.magnitude > leftThrustComponent) {
                 leftThrust = leftThrust.normalized * leftThrustComponent;
@@ -141,7 +154,7 @@ public class Ship : MonoBehaviour {
         }
         // right rcs
         float rightThrustComponent = Vector3.Dot(thrustVelocity, transform.right);
-        if (rightThrustComponent > 0.01f) {
+        if (driftActive && rightThrustComponent > 0.01f) {
             Vector3 rightThrust = rightSideThruster.GetDeltaThrust(mass);
             if (rightThrust.magnitude > rightThrustComponent) {
                 rightThrust = rightThrust.normalized * rightThrustComponent;
@@ -154,7 +167,7 @@ public class Ship : MonoBehaviour {
         }
         // forward rcs
         float frontThrustComponent = Vector3.Dot(thrustVelocity, transform.forward);
-        if (frontThrustComponent > 0.01f && !mainThrusterActive) {
+        if (driftActive && frontThrustComponent > 0.01f && !mainThrusterActive) {
             Vector3 frontThrust = frontLeftThruster.GetDeltaThrust(mass) + frontRightThruster.GetDeltaThrust(mass);
             if (frontThrust.magnitude > frontThrustComponent) {
                 frontThrust = frontThrust.normalized * frontThrustComponent;
@@ -167,20 +180,56 @@ public class Ship : MonoBehaviour {
             frontLeftThruster.TurnOffParticles();
             frontRightThruster.TurnOffParticles();
         }
+        // backward rcs
+        float backThrustComponent = Vector3.Dot(thrustVelocity, -transform.forward);
+        if (driftActive && backThrustComponent > 0.01f && !mainThrusterActive) {
+            Vector3 backThrust = backLeftThruster.GetDeltaThrust(mass) + backRightThruster.GetDeltaThrust(mass);
+            if (backThrust.magnitude > backThrustComponent) {
+                backThrust = backThrust.normalized * backThrustComponent;
+            }
+            thrustVelocity += backThrust;
+            backLeftThruster.TurnOnParticles();
+            backRightThruster.TurnOnParticles();
+        }
+        else {
+            backLeftThruster.TurnOffParticles();
+            backRightThruster.TurnOffParticles();
+        }
     }
 
     public void MoveFromThrust() {
         transform.position += thrustVelocity * Time.fixedDeltaTime;
     }
 
+    public void CalculateOverheatDamage () {
+        if (engine.IsCausingOverheatDamage()) {
+            TakeDamage(engine.GetOverheatDamage());
+        }
+    }
+
+    public void TakeDamage (float dmg) {
+        health = Mathf.Clamp(health - dmg, 0f, maxHealth);
+    }
+
+    public void RepairDamage (float dmg) {
+        health = Mathf.Clamp(health + dmg, 0f, maxHealth);
+    }
+
     public void ActivateThruster () {
-        engine.TurnOnParticles();
         mainThrusterActive = true;
     }
 
     public void DeactivateThruster () {
         engine.TurnOffParticles();
         mainThrusterActive = false;
+    }
+
+    public void ActivateDrift () {
+        driftActive = true;
+    }
+
+    public void DeactivateDrift () {
+        driftActive = false;
     }
 
     public void ActivateWeapon () {
