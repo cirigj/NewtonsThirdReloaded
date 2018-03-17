@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using JBirdEngine;
 
@@ -17,13 +18,21 @@ public enum ShipAbility {
     ChargeShot = 4,
 }
 
+public enum Layers {
+    PlayerShip = 8,
+    PlayerBullet = 9,
+    EnemyShip = 10,
+    EnemyBullet = 11,
+    NeutralObject = 12,
+}
+
 [System.Serializable]
 public class PartAnchor {
     public Vector3 relativePos;
     public Vector3 relativeDir;
 }
 
-public class Ship : MonoBehaviour {
+public class Ship : MonoBehaviour, IShootable {
 
     [Header("Ship Stats")]
     public float mass;
@@ -33,6 +42,7 @@ public class Ship : MonoBehaviour {
     [Header("Ship Mods")]
     [EnumHelper.EnumFlags]
     public ShipModifiers mods;
+    public float brokenEngineRecoilModifier;
     public ShipAbility ability;
 
     [Header("Parts")]
@@ -75,6 +85,26 @@ public class Ship : MonoBehaviour {
     public bool mainWeaponActive;
     public bool driftActive;
 
+    [Header("Physics")]
+    public Collider shipCollider;
+    public Layers shipLayer;
+    public Layers bulletLayer;
+
+    void Start () {
+        SetShipLayer();
+    }
+
+    void SetShipLayer () {
+        gameObject.layer = Convert.ToInt32(shipLayer);
+        foreach (Transform t in GetComponentsInChildren<Transform>()) {
+            t.gameObject.layer = Convert.ToInt32(shipLayer);
+        }
+    }
+
+    public bool HasMod(ShipModifiers mod) {
+        return EnumHelper.ContainsFlag(mods, mod);
+    }
+
     void FixedUpdate () {
         // Turn first, for accuracy
         MoveTowardsTargetYaw();
@@ -82,10 +112,23 @@ public class Ship : MonoBehaviour {
         FireWeaponAndHandleKickback();
         // Calculate Thrust
         CalculateTotalThrust();
-        AdjustThrustFromFriction();
+        AdjustThrustFromBraking();
         MoveFromThrust();
         // Overheat Damage
         CalculateOverheatDamage();
+    }
+
+    public void Interact (Projectile proj) {
+        proj.Contact(this);
+        TakeRecoil(proj.velocity * (proj.mass / mass));
+        TakeDamage(proj.damage);
+    }
+
+    void TakeRecoil (Vector3 recoil) {
+        thrustVelocity += recoil;
+        if (thrustVelocity.magnitude > maxSpeed) {
+            thrustVelocity = thrustVelocity.normalized * maxSpeed;
+        }
     }
 
     public void SetTargetYaw (Vector2 yaw) {
@@ -107,22 +150,27 @@ public class Ship : MonoBehaviour {
 
     public void FireWeaponAndHandleKickback () {
         if (mainWeaponActive) {
-            Vector3 kickback = weapon.TryFire(mass); // update this line for spread/side shot
-            Vector3 mitigation = engine.GetKickbackMitigation(mass);
-            if (mitigation.magnitude > kickback.magnitude) {
-                engine.OverheatFromThrust(-kickback);
-                kickback = Vector3.zero;
+            Vector3 kickback = weapon.TryFire(mass, bulletLayer); // update this line for spread/side shot
+            if (HasMod(ShipModifiers.BustedEngine)) {
+                kickback *= brokenEngineRecoilModifier;
             }
-            else if (mitigation.magnitude > 0f){
-                engine.OverheatFromThrust(mitigation);
-                kickback += mitigation;
+            else {
+                Vector3 mitigation = engine.GetKickbackMitigation(mass);
+                if (mitigation.magnitude > kickback.magnitude) {
+                    engine.OverheatFromThrust(-kickback);
+                    kickback = Vector3.zero;
+                }
+                else if (mitigation.magnitude > 0f) {
+                    engine.OverheatFromThrust(mitigation);
+                    kickback += mitigation;
+                }
             }
             thrustVelocity += kickback;
         }
     }
 
     public void CalculateTotalThrust () {
-        if (mainThrusterActive) {
+        if (mainThrusterActive && !HasMod(ShipModifiers.BustedEngine)) {
             Vector3 deltaThrust = engine.GetDeltaThrust(mass);
             if (deltaThrust.magnitude > 0f) {
                 engine.TurnOnParticles();
@@ -133,12 +181,13 @@ public class Ship : MonoBehaviour {
             thrustVelocity += deltaThrust;
             engine.OverheatFromThrust(deltaThrust);
         }
-        if (thrustVelocity.magnitude > maxSpeed) {
-            thrustVelocity = thrustVelocity.normalized * maxSpeed;
+        float forwardComponent = Vector3.Dot(thrustVelocity, transform.forward);
+        if (forwardComponent > maxSpeed || forwardComponent < -maxSpeed) {
+            thrustVelocity = (thrustVelocity / thrustVelocity.magnitude) * maxSpeed;
         }
     }
 
-    public void AdjustThrustFromFriction () {
+    public void AdjustThrustFromBraking () {
         // left rcs
         float leftThrustComponent = Vector3.Dot(thrustVelocity, -transform.right);
         if (driftActive && leftThrustComponent > 0.01f) {

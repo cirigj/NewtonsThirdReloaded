@@ -18,6 +18,17 @@ public class Projectile : MonoBehaviour {
         }
     }
 
+    void OnTriggerEnter(Collider other) {
+        IShootable shootable = other.GetComponent<IShootable>();
+        if (shootable != null) {
+            shootable.Interact(this);
+        }
+    }
+
+    public void Contact (IShootable other) {
+        Kill();
+    }
+
     void Kill () {
         Destroy(gameObject);
     }

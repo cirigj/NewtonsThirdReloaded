@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public enum WeaponModifiers {
@@ -35,20 +36,21 @@ public class Weapon : MonoBehaviour {
         }
     }
 
-    public Vector3 TryFire (float shipMass) {
+    public Vector3 TryFire (float shipMass, Layers bulletLayer) {
         if (cooldown == 0f) {
-            Fire();
+            Fire(bulletLayer);
             return GetKickback(shipMass);
         }
         else return Vector3.zero;
     }
 
-    public void Fire () {
+    public void Fire (Layers bulletLayer) {
         Projectile proj = Instantiate(projectilePrefab, transform.position + (transform.rotation * muzzleOffset), transform.rotation);
         proj.velocity = transform.forward * projectileSpeed;
         proj.lifetime = projectileLifetime;
         proj.damage = projectileDamage;
         proj.mass = projectileMass;
+        proj.gameObject.layer = Convert.ToInt32(bulletLayer);
         cooldown = 1f / fireRate;
     }
 
