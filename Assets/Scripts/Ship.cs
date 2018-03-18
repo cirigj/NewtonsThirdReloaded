@@ -1,13 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using UnityEngine;
 using JBirdEngine;
 
 public enum ShipModifiers {
-    Snake = 2<<0,
-    BustedEngine = 2<<1,
-    Squad = 2<<2,
+    Snake = 1,
+    BustedEngine = 2,
+    Squad = 4,
 }
 
 public enum ShipAbility {
@@ -32,18 +33,28 @@ public class PartAnchor {
     public Vector3 relativeDir;
 }
 
+public static class AnchorExtensions {
+    public static void Orient (this MonoBehaviour mb, PartAnchor anchor, bool mirror) {
+        mb.transform.localPosition = mirror ? anchor.relativePos.NegateX() : anchor.relativePos;
+        mb.transform.localRotation = Quaternion.Euler(mirror ? anchor.relativeDir.NegateY() : anchor.relativeDir);
+    }
+}
+
 public class Ship : MonoBehaviour, IShootable {
 
     [Header("Ship Stats")]
     public float mass;
-    public float maxSpeed;
     public float maxHealth;
 
     [Header("Ship Mods")]
     [EnumHelper.EnumFlags]
     public ShipModifiers mods;
     public float brokenEngineRecoilModifier;
+    public float brokenEngineDamageModifier;
     public ShipAbility ability;
+    public float ramMaxSpeedMultiplier;
+    public float ramSpeedFalloff;
+    public float ramCooldown;
 
     [Header("Parts")]
     public Engine engine;
@@ -53,6 +64,8 @@ public class Ship : MonoBehaviour, IShootable {
     [Header("Part Mods")]
     [EnumHelper.EnumFlags]
     public WeaponModifiers weaponMods;
+    public float sideMountDamageModifier;
+    public float spreadShotDamageModifier;
     [EnumHelper.EnumFlags]
     public ShieldModifiers shieldMods;
 
@@ -79,19 +92,62 @@ public class Ship : MonoBehaviour, IShootable {
 
     [Header("Runtime")]
     public float health;
+    public float maxSpeedIncrease;
     public Vector2 targetYaw;
     public Vector3 thrustVelocity;
     public bool mainThrusterActive;
     public bool mainWeaponActive;
     public bool driftActive;
+    public Vector3 lastThrustDirection;
+    public float abilityCooldown;
 
     [Header("Physics")]
     public Collider shipCollider;
     public Layers shipLayer;
     public Layers bulletLayer;
 
+    List<Weapon> weapons;
+
+    float currentMaxSpeed {
+        get {
+            return engine.maxSpeed + maxSpeedIncrease;
+        }
+    }
+
+    float currentDamageModifier {
+        get {
+            return 1f
+                * (HasMod(WeaponModifiers.SideMounts) ? sideMountDamageModifier : 1f)
+                * (HasMod(WeaponModifiers.SpreadNozzle) ? spreadShotDamageModifier : 1f)
+                * (HasMod(ShipModifiers.BustedEngine) ? brokenEngineDamageModifier : 1f);
+        }
+    }
+
     void Start () {
+        SetWeaponPositions();
         SetShipLayer();
+    }
+
+    void SetWeaponPositions() {
+        weapons = new List<Weapon>();
+        weapons.Add(weapon);
+        if (HasMod(WeaponModifiers.SideMounts)) {
+            Weapon rightMount = Instantiate(weapon, transform);
+            rightMount.Orient(sideWeaponAnchor, false);
+            Weapon leftMount = Instantiate(weapon, transform);
+            leftMount.Orient(sideWeaponAnchor, true);
+            weapons.Add(rightMount);
+            weapons.Add(leftMount);
+        }
+        if (HasMod(WeaponModifiers.SpreadNozzle)) {
+            Weapon rightSpread = Instantiate(weapon, transform);
+            rightSpread.Orient(spreadWeaponAnchor, false);
+            Weapon leftSpread = Instantiate(weapon, transform);
+            leftSpread.Orient(spreadWeaponAnchor, true);
+            weapons.Add(rightSpread);
+            weapons.Add(leftSpread);
+        }
+
     }
 
     void SetShipLayer () {
@@ -105,17 +161,33 @@ public class Ship : MonoBehaviour, IShootable {
         return EnumHelper.ContainsFlag(mods, mod);
     }
 
+    public bool HasMod (WeaponModifiers mod) {
+        return EnumHelper.ContainsFlag(weaponMods, mod);
+    }
+
+    public bool HasMod (ShieldModifiers mod) {
+        return EnumHelper.ContainsFlag(shieldMods, mod);
+    }
+
     void FixedUpdate () {
+        // Do this first so we can use abilities as soon as they're ready
+        AbilityCooldown();
         // Turn first, for accuracy
         MoveTowardsTargetYaw();
         // Fire weapons
         FireWeaponAndHandleKickback();
         // Calculate Thrust
+        AdjustMaxSpeed();
         CalculateTotalThrust();
         AdjustThrustFromBraking();
+        ClampVelocity();
         MoveFromThrust();
         // Overheat Damage
         CalculateOverheatDamage();
+    }
+
+    void AbilityCooldown () {
+        abilityCooldown = Mathf.Clamp(abilityCooldown - Time.fixedDeltaTime, 0f, abilityCooldown);
     }
 
     public void Interact (Projectile proj) {
@@ -126,8 +198,8 @@ public class Ship : MonoBehaviour, IShootable {
 
     void TakeRecoil (Vector3 recoil) {
         thrustVelocity += recoil;
-        if (thrustVelocity.magnitude > maxSpeed) {
-            thrustVelocity = thrustVelocity.normalized * maxSpeed;
+        if (thrustVelocity.magnitude > currentMaxSpeed) {
+            thrustVelocity = thrustVelocity.normalized * currentMaxSpeed;
         }
     }
 
@@ -150,7 +222,7 @@ public class Ship : MonoBehaviour, IShootable {
 
     public void FireWeaponAndHandleKickback () {
         if (mainWeaponActive) {
-            Vector3 kickback = weapon.TryFire(mass, bulletLayer); // update this line for spread/side shot
+            Vector3 kickback = weapons.Aggregate(Vector3.zero, (v, w) => v + w.TryFire(mass, bulletLayer, currentDamageModifier)); // update this line for spread/side shot
             if (HasMod(ShipModifiers.BustedEngine)) {
                 kickback *= brokenEngineRecoilModifier;
             }
@@ -180,10 +252,18 @@ public class Ship : MonoBehaviour, IShootable {
             }
             thrustVelocity += deltaThrust;
             engine.OverheatFromThrust(deltaThrust);
+            lastThrustDirection = transform.forward;
         }
-        float forwardComponent = Vector3.Dot(thrustVelocity, transform.forward);
-        if (forwardComponent > maxSpeed || forwardComponent < -maxSpeed) {
-            thrustVelocity = (thrustVelocity / thrustVelocity.magnitude) * maxSpeed;
+    }
+
+    void AdjustMaxSpeed () {
+        maxSpeedIncrease = Mathf.Clamp(maxSpeedIncrease - ramSpeedFalloff * Time.fixedDeltaTime, 0f, maxSpeedIncrease);
+    }
+
+    void ClampVelocity () {
+        float forwardComponent = Vector3.Dot(thrustVelocity, lastThrustDirection);
+        if (forwardComponent > currentMaxSpeed || forwardComponent < -currentMaxSpeed) {
+            thrustVelocity = (thrustVelocity / thrustVelocity.magnitude) * currentMaxSpeed;
         }
     }
 
@@ -287,6 +367,36 @@ public class Ship : MonoBehaviour, IShootable {
 
     public void DeactivateWeapon () {
         mainWeaponActive = false;
+    }
+
+    public void ActivateAbility () {
+        switch (ability) {
+            case ShipAbility.RamThrusters:
+                if (abilityCooldown == 0f) {
+                    RamBoost();
+                }
+                break;
+        }
+    }
+
+    public void DeactivateAbility () {
+
+    }
+
+    public float GetAbilityCooldown () {
+        switch (ability) {
+            case ShipAbility.RamThrusters:
+                return ramCooldown;
+        }
+        return 0f;
+    }
+
+    public void RamBoost () {
+        maxSpeedIncrease = engine.maxSpeed * ramMaxSpeedMultiplier;
+        thrustVelocity = transform.forward * currentMaxSpeed;
+        lastThrustDirection = transform.forward;
+        abilityCooldown = ramCooldown;
+        engine.PlayParticleBurst();
     }
 
 }

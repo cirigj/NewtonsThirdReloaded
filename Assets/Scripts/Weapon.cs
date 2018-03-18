@@ -4,11 +4,11 @@ using System;
 using UnityEngine;
 
 public enum WeaponModifiers {
-    SpreadNozzle = 2<<0,
-    SideMounts = 2<<1,
-    QuantumFluctuator = 2<<2,
-    ExplosiveCharges = 2<<3,
-    HeatSeekingNanobots = 2<<4,
+    SpreadNozzle = 1,
+    SideMounts = 2,
+    QuantumFluctuator = 4,
+    ExplosiveCharges = 8,
+    HeatSeekingNanobots = 16,
 }
 
 public class Weapon : MonoBehaviour {
@@ -36,19 +36,19 @@ public class Weapon : MonoBehaviour {
         }
     }
 
-    public Vector3 TryFire (float shipMass, Layers bulletLayer) {
+    public Vector3 TryFire (float shipMass, Layers bulletLayer, float dmgMultiplier) {
         if (cooldown == 0f) {
-            Fire(bulletLayer);
+            Fire(bulletLayer, dmgMultiplier);
             return GetKickback(shipMass);
         }
         else return Vector3.zero;
     }
 
-    public void Fire (Layers bulletLayer) {
+    public void Fire (Layers bulletLayer, float dmgMultiplier) {
         Projectile proj = Instantiate(projectilePrefab, transform.position + (transform.rotation * muzzleOffset), transform.rotation);
         proj.velocity = transform.forward * projectileSpeed;
         proj.lifetime = projectileLifetime;
-        proj.damage = projectileDamage;
+        proj.damage = projectileDamage * dmgMultiplier;
         proj.mass = projectileMass;
         proj.gameObject.layer = Convert.ToInt32(bulletLayer);
         cooldown = 1f / fireRate;

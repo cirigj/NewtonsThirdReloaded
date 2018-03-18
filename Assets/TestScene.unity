@@ -205,6 +205,11 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114131455598204356, guid: bf5cf9227882d6c4cb796b037d6eac8e,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1486050464}
     - target: {fileID: 223769805735522194, guid: bf5cf9227882d6c4cb796b037d6eac8e,
         type: 2}
       propertyPath: m_Camera
@@ -212,63 +217,12 @@ Prefab:
       objectReference: {fileID: 1658995153}
     - target: {fileID: 114131455598204356, guid: bf5cf9227882d6c4cb796b037d6eac8e,
         type: 2}
-      propertyPath: target
-      value: 
-      objectReference: {fileID: 1486050464}
+      propertyPath: abilityBar.flashTime
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bf5cf9227882d6c4cb796b037d6eac8e, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &347591838
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 347591840}
-  - component: {fileID: 347591839}
-  m_Layer: 0
-  m_Name: Asteroid3Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &347591839
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 347591838}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd62851c01dce2548a36721a18766874, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1486050464}
-  startDistanceMin: 10
-  startDistanceMax: 25
-  spawnFrequency:
-    targetNumber: 3
-    prefab: {fileID: 114039847563740572, guid: 5ae0434b662b86744a0466984f77a992, type: 2}
-  spawnDistanceMin: 30
-  spawnDistanceMax: 45
-  despawnDistance: 50
-  spawnTime: 0.2
-  spawnRetries: 3
---- !u!4 &347591840
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 347591838}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.0299072, y: 5.720213, z: -7.159895}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1847058865}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &652380633
 Prefab:
   m_ObjectHideFlags: 0
@@ -381,57 +335,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &1109172341
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1109172343}
-  - component: {fileID: 1109172342}
-  m_Layer: 0
-  m_Name: Asteroid2Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1109172342
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1109172341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd62851c01dce2548a36721a18766874, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1486050464}
-  startDistanceMin: 10
-  startDistanceMax: 25
-  spawnFrequency:
-    targetNumber: 9
-    prefab: {fileID: 114142975514263118, guid: 5623c665a61d27e4a900fafffd4b6e76, type: 2}
-  spawnDistanceMin: 30
-  spawnDistanceMax: 45
-  despawnDistance: 50
-  spawnTime: 0.2
-  spawnRetries: 3
---- !u!4 &1109172343
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1109172341}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.0299072, y: 5.720213, z: -7.159895}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1847058865}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1486050464 stripped
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114994812660856354, guid: 1b7a997f9aa0c0845ade1bd0125a06f9,
@@ -546,57 +449,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 24665723b86e75241bc7e68fd3d469eb, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &1645232527
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1645232529}
-  - component: {fileID: 1645232528}
-  m_Layer: 0
-  m_Name: Asteroid1Spawner
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1645232528
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1645232527}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd62851c01dce2548a36721a18766874, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1486050464}
-  startDistanceMin: 10
-  startDistanceMax: 25
-  spawnFrequency:
-    targetNumber: 20
-    prefab: {fileID: 114915537816054236, guid: 7c9768bdb9d48224d9f53299300e3b81, type: 2}
-  spawnDistanceMin: 30
-  spawnDistanceMax: 45
-  despawnDistance: 50
-  spawnTime: 0.2
-  spawnRetries: 3
---- !u!4 &1645232529
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1645232527}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.0299072, y: 5.720213, z: -7.159895}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 1847058865}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1658995149
 GameObject:
   m_ObjectHideFlags: 0
@@ -681,7 +533,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1658995149}
   m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 20, z: 0}
+  m_LocalPosition: {x: 0, y: 30, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -699,7 +551,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1486050464}
-  yDistance: 20
+  yDistance: 30
   aimEasing: 0.05
   movementEasing: 0.35
   finalEasing: 0.25
@@ -753,55 +605,60 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 1b7a997f9aa0c0845ade1bd0125a06f9, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &1847058863
-GameObject:
+--- !u!1001 &2131129886
+Prefab:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1847058865}
-  - component: {fileID: 1847058864}
-  m_Layer: 0
-  m_Name: SpawnController
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1847058864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1847058863}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf27c08253e084c4093774b492b5d70b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawners:
-  - {fileID: 1645232528}
-  - {fileID: 1109172342}
-  - {fileID: 347591839}
-  breakApartMappings:
-  - parentSpawner: {fileID: 347591839}
-    childSpawner: {fileID: 1109172342}
-  - parentSpawner: {fileID: 1109172342}
-    childSpawner: {fileID: 1645232528}
---- !u!4 &1847058865
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1847058863}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.0299072, y: -5.720213, z: 7.159895}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 1645232529}
-  - {fileID: 1109172343}
-  - {fileID: 347591840}
-  m_Father: {fileID: 0}
-  m_RootOrder: 7
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4746015057323274, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 1.0299072
+      objectReference: {fileID: 0}
+    - target: {fileID: 4746015057323274, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -5.720213
+      objectReference: {fileID: 0}
+    - target: {fileID: 4746015057323274, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 7.159895
+      objectReference: {fileID: 0}
+    - target: {fileID: 4746015057323274, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4746015057323274, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4746015057323274, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4746015057323274, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4746015057323274, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 114886563543356560, guid: 15ae098b69376c547985a3d275bc8abc,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1486050464}
+    - target: {fileID: 114591801524106408, guid: 15ae098b69376c547985a3d275bc8abc,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1486050464}
+    - target: {fileID: 114898158365431976, guid: 15ae098b69376c547985a3d275bc8abc,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 1486050464}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 15ae098b69376c547985a3d275bc8abc, type: 2}
+  m_IsPrefabParent: 0

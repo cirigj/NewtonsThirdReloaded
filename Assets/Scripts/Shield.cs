@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum ShieldModifiers {
-    ShieldOvercharger = 2<<0,
-    ReverseMagneticField = 2<<1,
-    OrganicShieldProjector = 2<<2,
+    ShieldOvercharger = 1,
+    ReverseMagneticField = 2,
+    OrganicShieldProjector = 4,
 }
 
 public class Shield : MonoBehaviour {

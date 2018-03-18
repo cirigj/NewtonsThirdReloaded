@@ -6,7 +6,15 @@ using JBirdEngine.ColorLibrary;
 
 [System.Serializable]
 public class UiBar {
+    public enum Mode {
+        PositiveX,
+        PositiveY,
+        NegativeX,
+        NegativeY,
+    }
+
     public Image progress;
+    public Mode fillMode;
     public Color normalColor;
     public Color warningColor;
     public float flashTime;
@@ -36,7 +44,24 @@ public class UiBar {
 
     public void SetProgress (MonoBehaviour parent, float percent, float warningTime = 0f) {
         percent = Mathf.Clamp01(percent);
-        progress.rectTransform.anchorMax = new Vector2(percent, 1f);
+        switch (fillMode) {
+            case Mode.PositiveX:
+                progress.rectTransform.anchorMax = new Vector2(percent, 1f);
+                progress.rectTransform.anchorMin = new Vector2(0f, 0f);
+                break;
+            case Mode.NegativeX:
+                progress.rectTransform.anchorMax = new Vector2(1f, 1f);
+                progress.rectTransform.anchorMin = new Vector2(1f - percent, 0f);
+                break;
+            case Mode.PositiveY:
+                progress.rectTransform.anchorMax = new Vector2(1f, percent);
+                progress.rectTransform.anchorMin = new Vector2(0f, 0f);
+                break;
+            case Mode.NegativeY:
+                progress.rectTransform.anchorMax = new Vector2(1f, 1f);
+                progress.rectTransform.anchorMin = new Vector2(0f, 1f - percent);
+                break;
+        }
         progress.rectTransform.sizeDelta = new Vector2(0f, 0f);
         if (percent <= warningZoneMax && percent >= warningZoneMin) {
             if (flashRoutine == null) {
@@ -59,6 +84,7 @@ public class ShipUIController : MonoBehaviour {
     public UiBar healthBar;
     public UiBar shieldBar;
     public UiBar overheatBar;
+    public UiBar abilityBar;
 
     void Update () {
         overheatBar.SetProgress(this, target.engine.overheat / target.engine.overheatTime);
@@ -70,6 +96,7 @@ public class ShipUIController : MonoBehaviour {
         }
         healthBar.SetProgress(this, target.health / target.maxHealth, overheatBar.currentFlashTime);
         shieldBar.SetProgress(this, target.shield.health / target.shield.maxHealth);
+        abilityBar.SetProgress(this, 1f - target.abilityCooldown / target.GetAbilityCooldown());
     }
 
 }

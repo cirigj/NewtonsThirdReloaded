@@ -6,6 +6,7 @@ public class Engine : MonoBehaviour {
 
     [Header("Engine Stats")]
     public float thrust;
+    public float maxSpeed;
     public float overheatTime;
     public float overheatRate;
     public float cooldownRate;
@@ -18,6 +19,7 @@ public class Engine : MonoBehaviour {
     public float overheat;
     public float cooldown;
     public List<ParticleSystem> particles;
+    public ParticleSystem burstParticles;
 
     void Update () {
         if (cooldown > 0f) {
@@ -61,6 +63,10 @@ public class Engine : MonoBehaviour {
 
     public void TurnOffParticles () {
         particles.ForEach(p => p.Stop());
+    }
+
+    public void PlayParticleBurst () {
+        burstParticles.Play();
     }
 
 }

@@ -15,11 +15,11 @@ public class ShipController : MonoBehaviour {
     }
 
     protected void AbilityTrigger () {
-
+        ship.ActivateAbility();
     }
 
     protected void AbilityRelease () {
-
+        ship.DeactivateAbility();
     }
 
     protected void EngineTrigger () {

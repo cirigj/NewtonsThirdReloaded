@@ -7,7 +7,7 @@ public class ShipTargetCamera : MonoBehaviour {
 
     public Ship target;
 
-    [Range(2f, 20f)]
+    [Range(2f, 50f)]
     public float yDistance;
     [Range(0.01f, 1f)]
     public float aimEasing;

@@ -59,8 +59,8 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EndHue: 3
-    - _EndSat: 0.5
+    - _EndHue: 346
+    - _EndSat: 0.75
     - _EndVal: 0.172
     - _GlossMapScale: 1
     - _Glossiness: 0.108
@@ -73,8 +73,8 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _StartHue: 44
-    - _StartSat: 0.5
+    - _StartHue: 56
+    - _StartSat: 0.75
     - _StartVal: 0.5
     - _UVSec: 0
     - _ZWrite: 1

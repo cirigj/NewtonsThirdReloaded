@@ -59,7 +59,7 @@ Material:
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
-    - _EndHue: 198
+    - _EndHue: 213
     - _EndSat: 1
     - _EndVal: 1
     - _GlossMapScale: 1
@@ -74,7 +74,7 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
-    - _StartHue: 300
+    - _StartHue: 293
     - _StartSat: 1
     - _StartVal: 1
     - _Transparency: 0
