@@ -15,6 +15,10 @@ public class Engine : MonoBehaviour {
     public float kickbackMitigation;
     public bool shutDownOnOverheat;
 
+    [Header("Ram Booster Stats")]
+    public float ramMaxSpeedMultiplier;
+    public float ramSpeedFalloff;
+
     [Header("Runtime")]
     public float overheat;
     public float cooldown;

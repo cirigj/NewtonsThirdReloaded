@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class HullShield : Shield {
 
-    public Ship ship;
-
     public override void Regenerate () {
         if (rechargeCooldown > 0f) {
             rechargeCooldown = Mathf.Clamp(rechargeCooldown - Time.fixedDeltaTime, 0f, Mathf.Max(shieldHitCooldownPenalty, shieldDownCooldownPenalty));
@@ -25,6 +23,11 @@ public class HullShield : Shield {
             ship.TakeDamage(dmg - health);
         }
         base.TakeDamage(dmg);
+    }
+
+    protected override void SetColliderState () {
+        base.SetColliderState();
+        ship.collider.enabled = health == 0f;
     }
 
 }

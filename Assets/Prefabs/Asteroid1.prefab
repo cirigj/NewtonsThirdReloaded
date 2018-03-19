@@ -55,6 +55,7 @@ GameObject:
   - component: {fileID: 4666945914472548}
   - component: {fileID: 114915537816054236}
   - component: {fileID: 135098454612119268}
+  - component: {fileID: 54311070190871524}
   m_Layer: 12
   m_Name: Asteroid1
   m_TagString: Untagged
@@ -171,6 +172,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280803733152672}
   m_Mesh: {fileID: 4300000, guid: afab5dfbd1351e946a318861b406c527, type: 3}
+--- !u!54 &54311070190871524
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1515625369435344}
+  serializedVersion: 2
+  m_Mass: 2
+  m_Drag: 0
+  m_AngularDrag: 0.025
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 1
 --- !u!114 &114915537816054236
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -184,7 +200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationMultiplier: 0.1
   startSpeed: 0.2
-  maxSpeed: 3
+  maxSpeed: 10
   health: 10
   mass: 2
   radius: 1
@@ -197,11 +213,15 @@ MonoBehaviour:
   particles: {fileID: 198872762265786402}
   destroyWaitTime: 0.5
   model: {fileID: 1721504212184254}
-  movement: {x: 0, y: 0, z: 0}
+  velocity: {x: 0, y: 0, z: 0}
   rotationSpeed: {x: 0, y: 0, z: 0, w: 0}
   startSpeedSet: 0
   parent: {fileID: 0}
   firstIndex: 0
+  damageModifier: 0.01
+  damageReductionModifier: -10
+  elasticity: 0.025
+  collider: {fileID: 0}
 --- !u!135 &135098454612119268
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -209,7 +229,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1515625369435344}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 1

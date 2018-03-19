@@ -40,7 +40,7 @@ public static class AnchorExtensions {
     }
 }
 
-public class Ship : MonoBehaviour, IShootable {
+public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     [Header("Ship Stats")]
     public float mass;
@@ -51,9 +51,8 @@ public class Ship : MonoBehaviour, IShootable {
     public ShipModifiers mods;
     public float brokenEngineRecoilModifier;
     public float brokenEngineDamageModifier;
+    public float brokenEngineRamModifier;
     public ShipAbility ability;
-    public float ramMaxSpeedMultiplier;
-    public float ramSpeedFalloff;
     public float ramCooldown;
 
     [Header("Parts")]
@@ -85,7 +84,7 @@ public class Ship : MonoBehaviour, IShootable {
     public PartAnchor shieldAnchor;
 
     [Header("Easing")]
-    [Range(0.01f,1f)]
+    [Range(0.01f, 1f)]
     public float yawEasing;
     [Range(0.01f, 1f)]
     public float friction;
@@ -102,9 +101,14 @@ public class Ship : MonoBehaviour, IShootable {
     public float abilityCooldown;
 
     [Header("Physics")]
-    public Collider shipCollider;
     public Layers shipLayer;
     public Layers bulletLayer;
+
+    [Header("Collisions")]
+    public Collider collider;
+    public float damageModifier;
+    public float damageReductionModifier;
+    public float elasticity;
 
     List<Weapon> weapons;
 
@@ -124,11 +128,14 @@ public class Ship : MonoBehaviour, IShootable {
     }
 
     void Start () {
+        if (collider == null) {
+            collider = GetComponent<Collider>();
+        }
         SetWeaponPositions();
         SetShipLayer();
     }
 
-    void SetWeaponPositions() {
+    void SetWeaponPositions () {
         weapons = new List<Weapon>();
         weapons.Add(weapon);
         if (HasMod(WeaponModifiers.SideMounts)) {
@@ -157,7 +164,7 @@ public class Ship : MonoBehaviour, IShootable {
         }
     }
 
-    public bool HasMod(ShipModifiers mod) {
+    public bool HasMod (ShipModifiers mod) {
         return EnumHelper.ContainsFlag(mods, mod);
     }
 
@@ -257,10 +264,10 @@ public class Ship : MonoBehaviour, IShootable {
     }
 
     void AdjustMaxSpeed () {
-        maxSpeedIncrease = Mathf.Clamp(maxSpeedIncrease - ramSpeedFalloff * Time.fixedDeltaTime, 0f, maxSpeedIncrease);
+        maxSpeedIncrease = Mathf.Clamp(maxSpeedIncrease - engine.ramSpeedFalloff * Time.fixedDeltaTime, 0f, maxSpeedIncrease);
     }
 
-    void ClampVelocity () {
+    public void ClampVelocity () {
         float forwardComponent = Vector3.Dot(thrustVelocity, lastThrustDirection);
         if (forwardComponent > currentMaxSpeed || forwardComponent < -currentMaxSpeed) {
             thrustVelocity = (thrustVelocity / thrustVelocity.magnitude) * currentMaxSpeed;
@@ -326,7 +333,7 @@ public class Ship : MonoBehaviour, IShootable {
         }
     }
 
-    public void MoveFromThrust() {
+    public void MoveFromThrust () {
         transform.position += thrustVelocity * Time.fixedDeltaTime;
     }
 
@@ -392,11 +399,65 @@ public class Ship : MonoBehaviour, IShootable {
     }
 
     public void RamBoost () {
-        maxSpeedIncrease = engine.maxSpeed * ramMaxSpeedMultiplier;
-        thrustVelocity = transform.forward * currentMaxSpeed;
+        maxSpeedIncrease = engine.maxSpeed * engine.ramMaxSpeedMultiplier;
+        Vector3 newThrust = transform.forward * currentMaxSpeed * (HasMod(ShipModifiers.BustedEngine) ? brokenEngineRamModifier : 1f);
+        engine.OverheatFromThrust(newThrust - thrustVelocity);
+        if (HasMod(ShipModifiers.BustedEngine)) {
+            if (Vector3.Dot(thrustVelocity, newThrust) > 0f) {
+                thrustVelocity += newThrust;
+            }
+            else {
+                thrustVelocity = newThrust;
+            }
+        }
+        else {
+            thrustVelocity = newThrust;
+        }
         lastThrustDirection = transform.forward;
         abilityCooldown = ramCooldown;
         engine.PlayParticleBurst();
+    }
+
+    void OnTriggerEnter (Collider other) {
+        ICollidable collidable = other.GetComponent<ICollidable>();
+        if (collidable != null) {
+            this.HandleCollision(collidable);
+        }
+    }
+
+    void OnTriggerStay (Collider other) {
+        ICollidable collidable = other.GetComponent<ICollidable>();
+        if (collidable != null) {
+            this.HandleCollision(collidable);
+        }
+    }
+
+    public float GetMass () {
+        return mass;
+    }
+
+    public Vector3 GetVelocity () {
+        return thrustVelocity;
+    }
+
+    public void SetVelocity (Vector3 vel) {
+        thrustVelocity = vel;
+    }
+
+    public Vector3 GetPosition () {
+        return transform.position;
+    }
+
+    public float GetElasticity () {
+        return elasticity;
+    }
+
+    public float GetDamage (float momentumDiff) {
+        return momentumDiff * damageModifier;
+    }
+
+    public float CalculateDamageReduction (float dmg) {
+        return Mathf.Clamp(dmg - dmg * damageReductionModifier, 0f, Mathf.Infinity);
     }
 
 }

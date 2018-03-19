@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using JBirdEngine;
 
-public class Asteroid : ISpawnable, IShootable {
+public class Asteroid : ISpawnable, IShootable, ICollidable {
 
     [Header("Movement Stats")]
     public float rotationMultiplier;
@@ -29,29 +29,40 @@ public class Asteroid : ISpawnable, IShootable {
     public GameObject model;
 
     [Header("Runtime")]
-    public Vector3 movement;
+    public Vector3 velocity;
     public Quaternion rotationSpeed;
     public bool startSpeedSet;
     public ISpawner parent;
     public int firstIndex;
 
+    [Header("Collisions")]
+    public float damageModifier;
+    public float damageReductionModifier;
+    public float elasticity;
+    public Collider collider;
+
     bool destroyed;
 
     void Start () {
+        if (collider == null) {
+            collider = GetComponent<Collider>();
+        }
         if (!startSpeedSet) {
-            movement = Random.onUnitSphere;
-            movement = new Vector3(movement.x, 0f, movement.z) * startSpeed;
+            velocity = Random.onUnitSphere;
+            velocity = new Vector3(velocity.x, 0f, velocity.z) * startSpeed;
             startSpeedSet = true;
         }
         rotationSpeed = Quaternion.Slerp(Quaternion.identity, Random.rotation, Time.fixedDeltaTime * rotationMultiplier);
     }
 
-    void Update () {
-        Move();
+    void FixedUpdate () {
+        if (!destroyed) {
+            Move();
+        }
     }
 
     void Move () {
-        transform.position += movement * Time.fixedDeltaTime;
+        transform.position += velocity * Time.fixedDeltaTime;
         transform.rotation *= rotationSpeed;
     }
 
@@ -63,17 +74,19 @@ public class Asteroid : ISpawnable, IShootable {
         }
     }
 
-    void TakeDamage (float dmg) {
-        health = Mathf.Clamp(health - dmg, 0f, health);
-        if (health == 0f) {
-            Kill();
+    public void TakeDamage (float dmg) {
+        if (!destroyed) {
+            health = Mathf.Clamp(health - dmg, 0f, health);
+            if (health == 0f) {
+                Kill();
+            }
         }
     }
 
     void TakeRecoil (Vector3 recoil) {
-        movement += recoil;
-        if (movement.magnitude > maxSpeed) {
-            movement = movement.normalized * maxSpeed;
+        velocity += recoil;
+        if (velocity.magnitude > maxSpeed) {
+            velocity = velocity.normalized * maxSpeed;
         }
     }
 
@@ -92,8 +105,11 @@ public class Asteroid : ISpawnable, IShootable {
     public override void Despawn (bool callParent) {
         if (callParent) {
             parent.RemoveObject(this);
+            StartCoroutine(DespawnAfterParticles());
         }
-        StartCoroutine(DespawnAfterParticles());
+        else {
+            Destroy(gameObject);
+        }
     }
 
     IEnumerator DespawnAfterParticles () {
@@ -112,13 +128,59 @@ public class Asteroid : ISpawnable, IShootable {
             for (int i = 0; i < breakApartNumber; ++i) {
                 Vector3 pos = VectorHelper.FromAzimuthAndElevation(startAngle + i * (360f / breakApartNumber), 0f) * breakApartPrefab.radius * breakApartDistanceMultiplier;
                 Asteroid child = Instantiate(breakApartPrefab, transform.position + pos, Random.rotation);
-                child.movement = movement + pos * Random.Range(breakApartSpeedMultiplierMin, breakApartSpeedMultiplierMax);
+                child.velocity = velocity + pos * Random.Range(breakApartSpeedMultiplierMin, breakApartSpeedMultiplierMax);
                 child.parent = parent.GetBreakApartParent();
                 child.parent.AddObject(child);
                 child.startSpeedSet = true;
             }
         }
+        Destroy(collider);
         Despawn(true);
+    }
+
+    void OnTriggerEnter (Collider other) {
+        ICollidable collidable = other.GetComponent<ICollidable>();
+        if (collidable != null) {
+            this.HandleCollision(collidable);
+        }
+    }
+
+    void OnTriggerStay (Collider other) {
+        ICollidable collidable = other.GetComponent<ICollidable>();
+        if (collidable != null) {
+            this.HandleCollision(collidable);
+        }
+    }
+
+    public float GetMass () {
+        return mass;
+    }
+
+    public Vector3 GetVelocity () {
+        return velocity;
+    }
+
+    public void SetVelocity (Vector3 vel) {
+        velocity = vel;
+        if (velocity.magnitude > maxSpeed) {
+            velocity = velocity.normalized * maxSpeed;
+        }
+    }
+
+    public Vector3 GetPosition() {
+        return transform.position;
+    }
+
+    public float GetElasticity () {
+        return elasticity;
+    }
+
+    public float GetDamage (float momentumDiff) {
+        return momentumDiff * damageModifier;
+    }
+
+    public float CalculateDamageReduction (float dmg) {
+        return Mathf.Clamp(dmg - dmg * damageReductionModifier, 0f, Mathf.Infinity);
     }
 
 }

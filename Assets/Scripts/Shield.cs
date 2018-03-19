@@ -8,7 +8,11 @@ public enum ShieldModifiers {
     OrganicShieldProjector = 4,
 }
 
-public class Shield : MonoBehaviour {
+public class Shield : MonoBehaviour, IShootable, ICollidable {
+
+    public Ship ship;
+
+    public Transform root;
 
     [Header("Shield Stats")]
     public float maxHealth;
@@ -24,9 +28,26 @@ public class Shield : MonoBehaviour {
     public float health;
     public float rechargeCooldown;
 
+    [Header("Collisions")]
+    public Collider collider;
+    public float damageModifier;
+    public float damageReductionModifier;
+    public float elasticity;
+
+    void Start () {
+        if (collider == null) {
+            collider = GetComponent<Collider>();
+        }
+    }
+
     void Update () {
         Regenerate();
         SetShieldOpacity();
+        SetColliderState();
+    }
+
+    protected virtual void SetColliderState () {
+        collider.enabled = health > 0f;
     }
 
     void SetShieldOpacity () {
@@ -44,9 +65,57 @@ public class Shield : MonoBehaviour {
         }
     }
 
+    public void Interact (Projectile proj) {
+        proj.Contact(this);
+        TakeDamage(proj.damage);
+    }
+
     public virtual void TakeDamage (float dmg) {
         health = Mathf.Clamp(health - dmg, 0f, maxHealth);
         rechargeCooldown = health == 0 ? shieldDownCooldownPenalty : shieldHitCooldownPenalty;
+    }
+
+    void OnTriggerEnter (Collider other) {
+        ICollidable collidable = other.GetComponent<ICollidable>();
+        if (collidable != null) {
+            this.HandleCollision(collidable);
+        }
+    }
+
+    void OnTriggerStay (Collider other) {
+        ICollidable collidable = other.GetComponent<ICollidable>();
+        if (collidable != null) {
+            this.HandleCollision(collidable);
+        }
+    }
+
+    public float GetMass () {
+        return ship.mass;
+    }
+
+    public Vector3 GetVelocity () {
+        return ship.thrustVelocity;
+    }
+
+    public void SetVelocity (Vector3 vel) {
+        ship.thrustVelocity = vel;
+        ship.ClampVelocity();
+    }
+
+    public Vector3 GetPosition () {
+        return ship.transform.position;
+    }
+
+    public float GetElasticity () {
+        return elasticity;
+    }
+
+    public float GetDamage (float momentumDiff) {
+        return momentumDiff * damageModifier;
+    }
+
+    public float CalculateDamageReduction (float dmg) {
+        return Mathf.Clamp(dmg - dmg * damageReductionModifier, 0f, Mathf.Infinity);
     }
 
 }
