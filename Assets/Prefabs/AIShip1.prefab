@@ -2197,17 +2197,18 @@ MonoBehaviour:
   ship: {fileID: 114717036855989272}
   root: {fileID: 4592591740072218}
   maxHealth: 30
-  rechargeRate: 1.5
-  shieldHitCooldownPenalty: 1
-  shieldDownCooldownPenalty: 2
+  rechargeRate: 2
+  shieldHitCooldownPenalty: 0.5
+  shieldDownCooldownPenalty: 1.5
+  projectileDamageReduction: 0.5
   shieldMaxOpacity: 0.35
   shieldRenderer: {fileID: 23264389067724924}
   health: 30
   rechargeCooldown: 0
   collider: {fileID: 0}
   damageModifier: 0.00375
-  damageReductionModifier: 0.95
-  elasticity: 0.005
+  damageReductionModifier: 0.85
+  elasticity: 0.01
 --- !u!114 &114478466472197698
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2271,6 +2272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 5
   maxHealth: 100
+  projectileDamageReduction: 0
   mods: 0
   brokenEngineRecoilModifier: 5
   brokenEngineDamageModifier: 2
@@ -2320,8 +2322,8 @@ MonoBehaviour:
   bulletLayer: 11
   collider: {fileID: 0}
   damageModifier: 0.005
-  damageReductionModifier: 0.75
-  elasticity: 0.005
+  damageReductionModifier: 0.4
+  elasticity: 0.01
 --- !u!114 &114832145567188902
 MonoBehaviour:
   m_ObjectHideFlags: 1

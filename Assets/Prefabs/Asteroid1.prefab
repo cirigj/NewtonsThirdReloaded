@@ -204,6 +204,7 @@ MonoBehaviour:
   health: 10
   mass: 2
   radius: 1
+  projectileDamageReduction: 0
   breakApartPrefab: {fileID: 0}
   breakApartMin: 0
   breakApartMax: 0
@@ -218,9 +219,9 @@ MonoBehaviour:
   startSpeedSet: 0
   parent: {fileID: 0}
   firstIndex: 0
-  damageModifier: 0.01
-  damageReductionModifier: -10
-  elasticity: 0.025
+  damageModifier: 0.00125
+  damageReductionModifier: -1
+  elasticity: 0.015
   collider: {fileID: 0}
 --- !u!135 &135098454612119268
 SphereCollider:

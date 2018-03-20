@@ -5,6 +5,7 @@ using JBirdEngine;
 
 public interface IDamagable {
 
+    void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos);
     void TakeDamage (float dmg);
 
 }
@@ -12,6 +13,7 @@ public interface IDamagable {
 public interface IShootable : IDamagable {
 
     void Interact (Projectile proj);
+    float CalculateProjectileDamageReduction (float dmg);
 
 }
 
@@ -21,7 +23,7 @@ public interface ICollidable : IDamagable {
     void SetVelocity (Vector3 vel);
     float GetMass ();
     float GetDamage (float momentumDiff);
-    float CalculateDamageReduction (float dmg);
+    float CalculateCollisionDamageReduction (float dmg);
     Vector3 GetPosition ();
     float GetElasticity ();
 
@@ -55,8 +57,8 @@ public static class ICollidableExtensions {
         me.SetVelocity(myNewVelocity + otherInitialVelocity);
         target.SetVelocity(theirNewVelocity + otherInitialVelocity);
         // Take damage based on the converted KE
-        me.TakeDamage(me.CalculateDamageReduction(target.GetDamage(convertedKE)));
-        target.TakeDamage(target.CalculateDamageReduction(me.GetDamage(convertedKE)));
+        me.TakeDamage(me.CalculateCollisionDamageReduction(target.GetDamage(convertedKE)), false, VectorHelper.Midpoint(me.GetPosition(), target.GetPosition()));
+        target.TakeDamage(target.CalculateCollisionDamageReduction(me.GetDamage(convertedKE)), false, VectorHelper.Midpoint(me.GetPosition(), target.GetPosition()));
     }
 
 }

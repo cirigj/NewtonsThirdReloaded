@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: f1350a6576eeac041802dfe955bf3794
+timeCreated: 1521489675
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Shaka Pow Upright Hollow
+  fontNames:
+  - Shaka Pow Upright Hollow
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

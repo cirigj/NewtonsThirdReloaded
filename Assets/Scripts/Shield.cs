@@ -19,6 +19,7 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
     public float rechargeRate;
     public float shieldHitCooldownPenalty;
     public float shieldDownCooldownPenalty;
+    public float projectileDamageReduction;
 
     [Header("Visual")]
     public float shieldMaxOpacity;
@@ -67,7 +68,15 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
 
     public void Interact (Projectile proj) {
         proj.Contact(this);
-        TakeDamage(proj.damage);
+        float dmg = CalculateProjectileDamageReduction(proj.damage);
+        TakeDamage(dmg, true, proj.transform.position);
+    }
+
+    public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
+        if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
+            DamageNumberController.instance.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, ship.shipLayer == Layers.PlayerShip);
+        }
+        TakeDamage(dmg);
     }
 
     public virtual void TakeDamage (float dmg) {
@@ -114,8 +123,12 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
         return momentumDiff * damageModifier;
     }
 
-    public float CalculateDamageReduction (float dmg) {
+    public float CalculateCollisionDamageReduction (float dmg) {
         return Mathf.Clamp(dmg - dmg * damageReductionModifier, 0f, Mathf.Infinity);
+    }
+
+    public float CalculateProjectileDamageReduction (float dmg) {
+        return Mathf.Clamp(dmg - dmg * projectileDamageReduction, 0f, Mathf.Infinity);
     }
 
 }

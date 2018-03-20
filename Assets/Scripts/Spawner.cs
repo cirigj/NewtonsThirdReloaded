@@ -86,8 +86,7 @@ public class Spawner : ISpawner {
         Vector3 pos = Vector3.zero;
         int tries;
         for (tries = 0; tries < spawnRetries; ++tries) {
-            pos = Random.onUnitSphere;
-            pos = new Vector3(pos.x, 0f, pos.z).normalized * (Random.Range(min, max) + prefab.GetSpawnRadius());
+            pos = Random.onUnitSphere.SetY(0f).normalized * (Random.Range(min, max) + prefab.GetSpawnRadius());
             pos += target.transform.position;
             if (CheckPositionValidity(pos, prefab.GetSpawnRadius())) {
                 break;

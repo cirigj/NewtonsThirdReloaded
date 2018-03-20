@@ -14,6 +14,7 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
     public float health;
     public float mass;
     public float radius;
+    public float projectileDamageReduction;
 
     [Header("Breakapart")]
     public Asteroid breakApartPrefab;
@@ -48,8 +49,7 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
             collider = GetComponent<Collider>();
         }
         if (!startSpeedSet) {
-            velocity = Random.onUnitSphere;
-            velocity = new Vector3(velocity.x, 0f, velocity.z) * startSpeed;
+            velocity = Random.onUnitSphere.SetY(0f) * startSpeed;
             startSpeedSet = true;
         }
         rotationSpeed = Quaternion.Slerp(Quaternion.identity, Random.rotation, Time.fixedDeltaTime * rotationMultiplier);
@@ -70,8 +70,16 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
         if (!destroyed) {
             proj.Contact(this);
             TakeRecoil(proj.velocity * (proj.mass / mass));
-            TakeDamage(proj.damage);
+            float dmg = CalculateProjectileDamageReduction(proj.damage);
+            TakeDamage(dmg, true, proj.transform.position);
         }
+    }
+
+    public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
+        if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
+            DamageNumberController.instance.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos);
+        }
+        TakeDamage(dmg);
     }
 
     public void TakeDamage (float dmg) {
@@ -179,8 +187,12 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
         return momentumDiff * damageModifier;
     }
 
-    public float CalculateDamageReduction (float dmg) {
+    public float CalculateCollisionDamageReduction (float dmg) {
         return Mathf.Clamp(dmg - dmg * damageReductionModifier, 0f, Mathf.Infinity);
+    }
+
+    public float CalculateProjectileDamageReduction (float dmg) {
+        return Mathf.Clamp(dmg - dmg * projectileDamageReduction, 0f, Mathf.Infinity);
     }
 
 }
