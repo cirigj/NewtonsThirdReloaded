@@ -205,16 +205,16 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 223769805735522194, guid: bf5cf9227882d6c4cb796b037d6eac8e,
-        type: 2}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 1658995153}
     - target: {fileID: 114131455598204356, guid: bf5cf9227882d6c4cb796b037d6eac8e,
         type: 2}
       propertyPath: target
       value: 
       objectReference: {fileID: 1486050464}
+    - target: {fileID: 223769805735522194, guid: bf5cf9227882d6c4cb796b037d6eac8e,
+        type: 2}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 1658995153}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bf5cf9227882d6c4cb796b037d6eac8e, type: 2}
   m_IsPrefabParent: 0
@@ -265,7 +265,7 @@ Prefab:
     - {fileID: 114027090792787620, guid: f182c3788047b584eadfd3a6ca7ed360, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: f182c3788047b584eadfd3a6ca7ed360, type: 2}
   m_IsPrefabParent: 0
---- !u!1001 &1026451320
+--- !u!1001 &725535153
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -477,7 +477,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
-  sizeMin: 2
+  sizeMin: 3
   sizeMax: 12
   valueClampMin: 0
   valueClampMax: 50
@@ -501,7 +501,7 @@ Transform:
 MonoBehaviour:
   m_PrefabParentObject: {fileID: 114994812660856354, guid: 1b7a997f9aa0c0845ade1bd0125a06f9,
     type: 2}
-  m_PrefabInternal: {fileID: 1026451320}
+  m_PrefabInternal: {fileID: 725535153}
   m_Script: {fileID: 11500000, guid: 1e1971deb486fbf419de64bbfd499cca, type: 3}
 --- !u!1 &1610020111
 GameObject:

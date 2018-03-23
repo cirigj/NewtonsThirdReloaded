@@ -210,7 +210,7 @@ MonoBehaviour:
   startDistanceMax: 35
   spawnFrequency:
     targetNumber: 25
-    prefab: {fileID: 114915537816054236, guid: 7c9768bdb9d48224d9f53299300e3b81, type: 2}
+    prefab: {fileID: 114661123600500562, guid: 7c9768bdb9d48224d9f53299300e3b81, type: 2}
   spawnDistanceMin: 40
   spawnDistanceMax: 55
   despawnDistance: 60

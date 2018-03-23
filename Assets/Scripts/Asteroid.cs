@@ -42,9 +42,9 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
     public float elasticity;
     public Collider collider;
 
-    bool destroyed;
+    protected bool destroyed;
 
-    void Start () {
+    protected virtual void Start () {
         if (collider == null) {
             collider = GetComponent<Collider>();
         }
@@ -83,11 +83,9 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
     }
 
     public void TakeDamage (float dmg) {
-        if (!destroyed) {
-            health = Mathf.Clamp(health - dmg, 0f, health);
-            if (health == 0f) {
-                Kill();
-            }
+        health = Mathf.Clamp(health - dmg, 0f, health);
+        if (health == 0f) {
+            Kill();
         }
     }
 
@@ -123,27 +121,29 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
     IEnumerator DespawnAfterParticles () {
         model.SetActive(false);
         particles.Play();
-        destroyed = true;
         yield return new WaitForSeconds(destroyWaitTime);
         Destroy(gameObject);
     }
 
-    void Kill () {
-        int breakApartNumber = Mathf.FloorToInt(Random.Range(breakApartMin, breakApartMax));
-        if (breakApartNumber > 0 && breakApartPrefab != null) {
-            float radius = breakApartPrefab.radius;
-            float startAngle = Random.Range(0f, 360f);
-            for (int i = 0; i < breakApartNumber; ++i) {
-                Vector3 pos = VectorHelper.FromAzimuthAndElevation(startAngle + i * (360f / breakApartNumber), 0f) * breakApartPrefab.radius * breakApartDistanceMultiplier;
-                Asteroid child = Instantiate(breakApartPrefab, transform.position + pos, Random.rotation);
-                child.velocity = velocity + pos * Random.Range(breakApartSpeedMultiplierMin, breakApartSpeedMultiplierMax);
-                child.parent = parent.GetBreakApartParent();
-                child.parent.AddObject(child);
-                child.startSpeedSet = true;
+    protected virtual void Kill () {
+        if (!destroyed) {
+            destroyed = true;
+            int breakApartNumber = Mathf.FloorToInt(Random.Range(breakApartMin, breakApartMax));
+            if (breakApartNumber > 0 && breakApartPrefab != null) {
+                float radius = breakApartPrefab.radius;
+                float startAngle = Random.Range(0f, 360f);
+                for (int i = 0; i < breakApartNumber; ++i) {
+                    Vector3 pos = VectorHelper.FromAzimuthAndElevation(startAngle + i * (360f / breakApartNumber), 0f) * breakApartPrefab.radius * breakApartDistanceMultiplier;
+                    Asteroid child = Instantiate(breakApartPrefab, transform.position + pos, Random.rotation);
+                    child.velocity = velocity + pos * Random.Range(breakApartSpeedMultiplierMin, breakApartSpeedMultiplierMax);
+                    child.parent = parent.GetBreakApartParent();
+                    child.parent.AddObject(child);
+                    child.startSpeedSet = true;
+                }
             }
+            Destroy(collider);
+            Despawn(true);
         }
-        Destroy(collider);
-        Despawn(true);
     }
 
     void OnTriggerEnter (Collider other) {

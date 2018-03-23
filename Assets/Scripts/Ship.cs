@@ -45,7 +45,10 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     [Header("Ship Stats")]
     public float mass;
     public float maxHealth;
+    public float maxArmor;
     public float projectileDamageReduction;
+    public float lowHealthActual;
+    public float lowHealthVisual;
 
     [Header("Ship Mods")]
     [EnumHelper.EnumFlags]
@@ -92,6 +95,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     [Header("Runtime")]
     public float health;
+    public float armor;
     public float maxSpeedIncrease;
     public Vector2 targetYaw;
     public Vector3 thrustVelocity;
@@ -110,6 +114,11 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     public float damageModifier;
     public float damageReductionModifier;
     public float elasticity;
+
+    [Header("Particles")]
+    public ParticleSystem healthParticles;
+    public ParticleSystem armorParticles;
+    public ParticleSystem coolantParticles;
 
     List<Weapon> weapons;
 
@@ -340,7 +349,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     }
 
     public void CalculateOverheatDamage () {
-        if (engine.IsCausingOverheatDamage()) {
+        if (engine.IsOverheating()) {
             TakeDamage(engine.GetOverheatDamage());
         }
     }
@@ -353,11 +362,25 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     }
 
     public void TakeDamage (float dmg) {
-        health = Mathf.Clamp(health - dmg, 0f, maxHealth);
+        float healthDmg = Mathf.Clamp(dmg - armor, 0f, dmg);
+        armor = Mathf.Clamp(armor - dmg, 0f, armor);
+        health = Mathf.Clamp(health - healthDmg, 0f, maxHealth);
     }
 
     public void RepairDamage (float dmg) {
+        if (health <= lowHealthActual) {
+            float visualHealth = (health / lowHealthActual) * lowHealthVisual;
+            dmg += lowHealthVisual - visualHealth;
+        }
+        if (dmg >= 1f) {
+            healthParticles.Play();
+        }
         health = Mathf.Clamp(health + dmg, 0f, maxHealth);
+    }
+
+    public void AddArmor (float extra) {
+        armorParticles.Play();
+        armor = Mathf.Clamp(armor + extra, 0f, maxArmor);
     }
 
     public void ActivateThruster () {

@@ -17,7 +17,7 @@ public class DamageNumber : MonoBehaviour {
     }
 
     public void SetDamage (int dmg) {
-        text.text = string.Format("-{0}", dmg.ToString());
+        text.text = string.Format("{0}", dmg.ToString());
     }
 
     public void SetColor (Color color) {

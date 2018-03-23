@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Engine : MonoBehaviour {
 
+    public Ship ship;
+
     [Header("Engine Stats")]
     public float thrust;
     public float maxSpeed;
@@ -12,6 +14,8 @@ public class Engine : MonoBehaviour {
     public float cooldownRate;
     public float overheatCooldown;
     public float overheatDamage;
+    public float maxCoolant;
+    public float coolantUseRate;
     public float kickbackMitigation;
     public bool shutDownOnOverheat;
 
@@ -22,6 +26,7 @@ public class Engine : MonoBehaviour {
     [Header("Runtime")]
     public float overheat;
     public float cooldown;
+    public float coolant;
     public List<ParticleSystem> particles;
     public ParticleSystem burstParticles;
 
@@ -34,15 +39,20 @@ public class Engine : MonoBehaviour {
         }
     }
 
+    public void AddCoolant (float extra) {
+        coolant = Mathf.Clamp(coolant + extra, 0f, maxCoolant);
+        ship.coolantParticles.Play();
+    }
+
     public Vector3 GetDeltaThrust (float shipMass) {
-        if (shutDownOnOverheat && overheat >= overheatTime) {
+        if (shutDownOnOverheat && (overheat >= overheatTime && coolant == 0f)) {
             return Vector3.zero;
         }
         return -transform.forward * (thrust / shipMass) * Time.fixedDeltaTime;
     }
 
     public Vector3 GetKickbackMitigation (float shipMass) {
-        if (shutDownOnOverheat && overheat >= overheatTime) {
+        if (shutDownOnOverheat && (overheat >= overheatTime && coolant == 0f)) {
             return Vector3.zero;
         }
         return -transform.forward * kickbackMitigation / shipMass;
@@ -53,11 +63,15 @@ public class Engine : MonoBehaviour {
         cooldown = overheatCooldown;
     }
 
-    public bool IsCausingOverheatDamage () {
-        return overheat >= overheatTime && overheatDamage > 0f;
+    public bool IsOverheating () {
+        return overheat >= overheatTime;
     }
 
     public float GetOverheatDamage () {
+        if (coolant > 0f) {
+            coolant = Mathf.Clamp(coolant - coolantUseRate * Time.fixedDeltaTime, 0f, maxCoolant);
+            return 0f;
+        }
         return overheatDamage * Time.fixedDeltaTime;
     }
 

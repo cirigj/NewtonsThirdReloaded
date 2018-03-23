@@ -28,7 +28,7 @@ public class DamageNumberController : MonoBehaviour {
         Vector3 randomPos = pos + (Random.onUnitSphere * randomDistance).SetY(yDistance);
         DamageNumber newNumber = Instantiate(numberPrefab, randomPos, Quaternion.Euler(eulers));
         newNumber.SetColor((isPlayer ? playerDefenseGradient : defenseGradient).Evaluate((dmgReduction + 1f) / 2f));
-        newNumber.SetDamage(Mathf.RoundToInt(dmg));
+        newNumber.SetDamage(Mathf.CeilToInt(dmg));
         float sizeT = (Mathf.Clamp(dmg, valueClampMin, valueClampMax) - valueClampMin) / (valueClampMax - valueClampMin);
         newNumber.SetSize(sizeRamp.Evaluate(sizeT) * (sizeMax - sizeMin) + sizeMin);
     }
