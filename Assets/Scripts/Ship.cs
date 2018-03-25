@@ -369,8 +369,13 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     public void RepairDamage (float dmg) {
         if (health <= lowHealthActual) {
-            float visualHealth = (health / lowHealthActual) * lowHealthVisual;
-            dmg += lowHealthVisual - visualHealth;
+            if (dmg >= 1f) {
+                float visualHealth = (health / lowHealthActual) * lowHealthVisual;
+                dmg += lowHealthVisual - visualHealth;
+            }
+            else {
+                dmg = dmg * 2f;
+            }
         }
         if (dmg >= 1f) {
             healthParticles.Play();
