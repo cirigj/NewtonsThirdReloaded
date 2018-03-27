@@ -61,7 +61,7 @@ Material:
     - _DstBlend: 0
     - _EndHue: 346
     - _EndSat: 0.75
-    - _EndVal: 0.172
+    - _EndVal: 0.15
     - _GlossMapScale: 1
     - _Glossiness: 0.108
     - _GlossyReflections: 1
@@ -75,7 +75,7 @@ Material:
     - _SrcBlend: 1
     - _StartHue: 56
     - _StartSat: 0.75
-    - _StartVal: 0.5
+    - _StartVal: 0.35
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:

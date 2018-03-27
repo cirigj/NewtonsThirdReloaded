@@ -2107,6 +2107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03da1e9aa9ea76b4591fcd915ee8e022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship: {fileID: 0}
   thrust: 50
   maxSpeed: 0
   overheatTime: 5
@@ -2114,12 +2115,15 @@ MonoBehaviour:
   cooldownRate: 1
   overheatCooldown: 0.5
   overheatDamage: 0
+  maxCoolant: 0
+  coolantUseRate: 0
   kickbackMitigation: 0
   shutDownOnOverheat: 0
   ramMaxSpeedMultiplier: 0
   ramSpeedFalloff: 0
   overheat: 0
   cooldown: 0
+  coolant: 0
   particles:
   - {fileID: 198087411900370518}
   - {fileID: 198245506835196176}
@@ -2136,6 +2140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03da1e9aa9ea76b4591fcd915ee8e022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship: {fileID: 0}
   thrust: 250
   maxSpeed: 20
   overheatTime: 4
@@ -2143,12 +2148,15 @@ MonoBehaviour:
   cooldownRate: 1
   overheatCooldown: 0.5
   overheatDamage: 2.5
+  maxCoolant: 0
+  coolantUseRate: 0
   kickbackMitigation: 0
   shutDownOnOverheat: 0
   ramMaxSpeedMultiplier: 2
   ramSpeedFalloff: 30
   overheat: 0
   cooldown: 0
+  coolant: 0
   particles:
   - {fileID: 198847895045630002}
   - {fileID: 198137621749349022}
@@ -2165,6 +2173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03da1e9aa9ea76b4591fcd915ee8e022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship: {fileID: 0}
   thrust: 50
   maxSpeed: 0
   overheatTime: 5
@@ -2172,12 +2181,15 @@ MonoBehaviour:
   cooldownRate: 1
   overheatCooldown: 0.5
   overheatDamage: 0
+  maxCoolant: 0
+  coolantUseRate: 0
   kickbackMitigation: 0
   shutDownOnOverheat: 0
   ramMaxSpeedMultiplier: 0
   ramSpeedFalloff: 0
   overheat: 0
   cooldown: 0
+  coolant: 0
   particles:
   - {fileID: 198499022105714164}
   - {fileID: 198258001115229314}
@@ -2241,6 +2253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03da1e9aa9ea76b4591fcd915ee8e022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship: {fileID: 0}
   thrust: 100
   maxSpeed: 0
   overheatTime: 5
@@ -2248,12 +2261,15 @@ MonoBehaviour:
   cooldownRate: 1
   overheatCooldown: 0.5
   overheatDamage: 0
+  maxCoolant: 0
+  coolantUseRate: 0
   kickbackMitigation: 0
   shutDownOnOverheat: 0
   ramMaxSpeedMultiplier: 0
   ramSpeedFalloff: 0
   overheat: 0
   cooldown: 0
+  coolant: 0
   particles:
   - {fileID: 198667393256230018}
   - {fileID: 198522865922198224}
@@ -2272,7 +2288,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mass: 5
   maxHealth: 100
+  maxArmor: 0
   projectileDamageReduction: 0
+  lowHealthActual: 0
+  lowHealthVisual: 0
   mods: 0
   brokenEngineRecoilModifier: 5
   brokenEngineDamageModifier: 2
@@ -2310,6 +2329,7 @@ MonoBehaviour:
   yawEasing: 0.6
   friction: 0.01
   health: 100
+  armor: 0
   maxSpeedIncrease: 0
   targetYaw: {x: 0, y: 1}
   thrustVelocity: {x: 0, y: 0, z: 0}
@@ -2324,6 +2344,9 @@ MonoBehaviour:
   damageModifier: 0.005
   damageReductionModifier: 0.4
   elasticity: 0.01
+  healthParticles: {fileID: 0}
+  armorParticles: {fileID: 0}
+  coolantParticles: {fileID: 0}
 --- !u!114 &114832145567188902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2335,6 +2358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03da1e9aa9ea76b4591fcd915ee8e022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship: {fileID: 0}
   thrust: 100
   maxSpeed: 0
   overheatTime: 5
@@ -2342,12 +2366,15 @@ MonoBehaviour:
   cooldownRate: 1
   overheatCooldown: 0.5
   overheatDamage: 0
+  maxCoolant: 0
+  coolantUseRate: 0
   kickbackMitigation: 0
   shutDownOnOverheat: 0
   ramMaxSpeedMultiplier: 0
   ramSpeedFalloff: 0
   overheat: 0
   cooldown: 0
+  coolant: 0
   particles:
   - {fileID: 198069504346230942}
   - {fileID: 198307519004338054}
@@ -2364,6 +2391,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03da1e9aa9ea76b4591fcd915ee8e022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship: {fileID: 0}
   thrust: 50
   maxSpeed: 0
   overheatTime: 5
@@ -2371,12 +2399,15 @@ MonoBehaviour:
   cooldownRate: 1
   overheatCooldown: 0.5
   overheatDamage: 0
+  maxCoolant: 0
+  coolantUseRate: 0
   kickbackMitigation: 0
   shutDownOnOverheat: 0
   ramMaxSpeedMultiplier: 0
   ramSpeedFalloff: 0
   overheat: 0
   cooldown: 0
+  coolant: 0
   particles:
   - {fileID: 198009407421262378}
   - {fileID: 198542352721633486}
@@ -2393,6 +2424,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03da1e9aa9ea76b4591fcd915ee8e022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ship: {fileID: 0}
   thrust: 50
   maxSpeed: 0
   overheatTime: 5
@@ -2400,12 +2432,15 @@ MonoBehaviour:
   cooldownRate: 1
   overheatCooldown: 0.5
   overheatDamage: 0
+  maxCoolant: 0
+  coolantUseRate: 0
   kickbackMitigation: 0
   shutDownOnOverheat: 0
   ramMaxSpeedMultiplier: 0
   ramSpeedFalloff: 0
   overheat: 0
   cooldown: 0
+  coolant: 0
   particles:
   - {fileID: 198860448830649720}
   - {fileID: 198193330801679036}

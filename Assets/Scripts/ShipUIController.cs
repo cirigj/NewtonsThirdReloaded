@@ -14,6 +14,7 @@ public class UiBar {
     public float flashTime;
     public float warningZoneMin;
     public float warningZoneMax;
+    public float maxPercentPerStep;
 
     public Coroutine flashRoutine;
     public float currentFlashTime;
@@ -41,7 +42,12 @@ public class UiBar {
 
     public virtual void SetProgress (MonoBehaviour parent, float percent, float warningTime = 0f) {
         percent = Mathf.Clamp01(percent);
-        progress.fillAmount = percent;
+        if (percent > progress.fillAmount) {
+            progress.fillAmount = Mathf.Min(progress.fillAmount + maxPercentPerStep, percent);
+        }
+        else {
+            progress.fillAmount = Mathf.Max(progress.fillAmount - maxPercentPerStep, percent);
+        }
         if (percent <= warningZoneMax && percent >= warningZoneMin) {
             if (flashRoutine == null) {
                 flashRoutine = parent.StartCoroutine(FlashWarningColor(warningTime));
@@ -73,9 +79,15 @@ public class CoolantUiBar : UiBar {
 
     public override void SetProgress (MonoBehaviour parent, float percent, float warningTime = 0) {
         percent = Mathf.Clamp01(percent);
-        if (progress.material.GetFloat("_Fill") != percent) {
+        float fill = progress.material.GetFloat("_Fill");
+        if (fill != percent) {
             var newMat = new Material(progress.material);
-            newMat.SetFloat("_Fill", percent);
+            if (percent > fill) {
+                newMat.SetFloat("_Fill", Mathf.Min(fill + maxPercentPerStep, percent));
+            }
+            else {
+                newMat.SetFloat("_Fill", Mathf.Max(fill - maxPercentPerStep, percent));
+            }
             progress.material = newMat;
         }
         if (percent <= warningZoneMax && percent >= warningZoneMin) {
@@ -107,33 +119,79 @@ public class HealthUiBar : UiBar {
     public float minRingPercent;
     public float maxRingPercent;
     public float barPixelsPerHP;
+    public int maxBarPixelsPerStep;
 
-    public void SetProgress (MonoBehaviour parent, Ship ship, float warningTime = 0, bool hullShield = false) {
+    float clampedArmor = 0;
+    float clampedHealth = 120;
+
+    public void SetProgress (MonoBehaviour parent, Ship ship, float warningTime = 0) {
         float lowHealthDiff = ship.lowHealthActual - ship.lowHealthVisual;
-        float visualHealth = ship.health;
+
+        if (ship.health > clampedHealth) {
+            clampedHealth = Mathf.Min(clampedHealth + maxBarPixelsPerStep / barPixelsPerHP, ship.health);
+        }
+        else {
+            clampedHealth = Mathf.Max(clampedHealth - maxBarPixelsPerStep / barPixelsPerHP, ship.health);
+        }
+
+        float visualHealth = clampedHealth;
+
         if (visualHealth <= ship.lowHealthActual) {
             visualHealth = (visualHealth / ship.lowHealthActual) * ship.lowHealthVisual;
         }
         else {
             visualHealth -= lowHealthDiff;
         }
-        float percent = visualHealth / ship.maxHealth;
 
-        float maxVisualHealth = (ship.maxHealth - lowHealthDiff) + ship.armor + (hullShield ? ship.shield.maxHealth : 0f);
-        extraBits.ForEach(e => e.rectTransform.sizeDelta = new Vector2(Mathf.FloorToInt((maxVisualHealth - healthInRing) * barPixelsPerHP) + extraBuffer, e.rectTransform.sizeDelta.y));
+        if (ship.armor > clampedArmor) {
+            clampedArmor = Mathf.Min(clampedArmor + maxBarPixelsPerStep / barPixelsPerHP, ship.armor);
+        }
+        else {
+            clampedArmor = Mathf.Max(clampedArmor - maxBarPixelsPerStep / barPixelsPerHP, ship.armor);
+        }
 
-        float visualArmor = visualHealth + ship.armor;
-        float visualShield = visualArmor + (hullShield ? ship.shield.health : 0f);
+        float maxVisualHealth = (ship.maxHealth - lowHealthDiff) + clampedArmor;
+        int barSize = Mathf.FloorToInt((maxVisualHealth - healthInRing) * barPixelsPerHP);
+        extraBits.ForEach(e => e.rectTransform.sizeDelta = new Vector2(
+                (barSize > e.rectTransform.sizeDelta.x
+                    ? Mathf.Min(e.rectTransform.sizeDelta.x + maxBarPixelsPerStep, barSize)
+                    : Mathf.Max(e.rectTransform.sizeDelta.x - maxBarPixelsPerStep, barSize)
+                ) + extraBuffer,
+                e.rectTransform.sizeDelta.y
+            ));
+
+        float visualArmor = visualHealth + clampedArmor;
+        float percent = visualArmor / maxVisualHealth;
 
         float ringHealthPercent = minRingPercent + Mathf.Clamp(visualHealth / healthInRing, 0f, 1f) * (maxRingPercent - minRingPercent);
-        progress.fillAmount = ringHealthPercent;
+        if (ringHealthPercent > progress.fillAmount) {
+            progress.fillAmount = Mathf.Min(progress.fillAmount + maxPercentPerStep, ringHealthPercent);
+        }
+        else {
+            progress.fillAmount = Mathf.Max(progress.fillAmount - maxPercentPerStep, ringHealthPercent);
+        }
         float ringArmorPercent = minRingPercent + Mathf.Clamp(visualArmor / healthInRing, 0f, 1f) * (maxRingPercent - minRingPercent);
-        armor.progress.fillAmount = ringArmorPercent;
+        if (ringArmorPercent > armor.progress.fillAmount) {
+            armor.progress.fillAmount = Mathf.Min(armor.progress.fillAmount + maxPercentPerStep, ringArmorPercent);
+        }
+        else {
+            armor.progress.fillAmount = Mathf.Max(armor.progress.fillAmount - maxPercentPerStep, ringArmorPercent);
+        }
 
         float extraHealthPercent = Mathf.Clamp((visualHealth - healthInRing) / (maxVisualHealth - healthInRing), 0f, 1f);
-        progressExtra.fillAmount = extraHealthPercent;
+        if (extraHealthPercent > progressExtra.fillAmount) {
+            progressExtra.fillAmount = Mathf.Min(progressExtra.fillAmount + maxPercentPerStep, extraHealthPercent);
+        }
+        else {
+            progressExtra.fillAmount = Mathf.Max(progressExtra.fillAmount - maxPercentPerStep, extraHealthPercent);
+        }
         float extraArmorPercent = Mathf.Clamp((visualArmor - healthInRing) / (maxVisualHealth - healthInRing), 0f, 1f);
-        progressExtraArmor.fillAmount = extraArmorPercent;
+        if (extraArmorPercent > progressExtraArmor.fillAmount) {
+            progressExtraArmor.fillAmount = Mathf.Min(progressExtraArmor.fillAmount + maxPercentPerStep, extraArmorPercent);
+        }
+        else {
+            progressExtraArmor.fillAmount = Mathf.Max(progressExtraArmor.fillAmount - maxPercentPerStep, extraArmorPercent);
+        }
 
         percent = Mathf.Clamp01(percent);
 
@@ -199,7 +257,7 @@ public class ShipUIController : MonoBehaviour {
         overheatBar.SetProgress(this, target.engine.overheat / target.engine.overheatTime);
         coolantBar.SetProgress(this, VolumetricCorrection(target.engine.coolant / target.engine.maxCoolant));
         shieldBar.SetProgress(this, target.shield.health / target.shield.maxHealth);
-        healthBar.SetProgress(this, target, overheatBar.currentFlashTime, false);
+        healthBar.SetProgress(this, target, overheatBar.currentFlashTime);
         abilityBar.SetProgress(this, 1f - target.abilityCooldown / target.GetAbilityCooldown());
     }
 

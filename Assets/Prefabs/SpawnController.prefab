@@ -108,7 +108,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1470822156608358}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.0299072, y: -5.720213, z: 7.159895}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4414762632821402}
@@ -163,13 +163,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   startDistanceMin: 10
-  startDistanceMax: 35
+  startDistanceMax: 60
   spawnFrequency:
     targetNumber: 17
     prefab: {fileID: 114142975514263118, guid: 5623c665a61d27e4a900fafffd4b6e76, type: 2}
-  spawnDistanceMin: 40
-  spawnDistanceMax: 55
-  despawnDistance: 60
+  spawnDistanceMin: 45
+  spawnDistanceMax: 60
+  despawnDistance: 80
   spawnTime: 0.2
   spawnRetries: 3
 --- !u!114 &114886563543356560
@@ -185,13 +185,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   startDistanceMin: 10
-  startDistanceMax: 35
+  startDistanceMax: 60
   spawnFrequency:
     targetNumber: 4
     prefab: {fileID: 114039847563740572, guid: 5ae0434b662b86744a0466984f77a992, type: 2}
-  spawnDistanceMin: 40
-  spawnDistanceMax: 55
-  despawnDistance: 60
+  spawnDistanceMin: 45
+  spawnDistanceMax: 60
+  despawnDistance: 80
   spawnTime: 0.2
   spawnRetries: 3
 --- !u!114 &114898158365431976
@@ -207,12 +207,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 0}
   startDistanceMin: 10
-  startDistanceMax: 35
+  startDistanceMax: 60
   spawnFrequency:
     targetNumber: 25
     prefab: {fileID: 114661123600500562, guid: 7c9768bdb9d48224d9f53299300e3b81, type: 2}
-  spawnDistanceMin: 40
-  spawnDistanceMax: 55
-  despawnDistance: 60
+  spawnDistanceMin: 45
+  spawnDistanceMax: 60
+  despawnDistance: 80
   spawnTime: 0.2
   spawnRetries: 3

@@ -1187,7 +1187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1808559211010780
 GameObject:
   m_ObjectHideFlags: 1
@@ -1399,7 +1399,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4005966166001840
 Transform:
   m_ObjectHideFlags: 1
@@ -3415,9 +3415,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 509d0bd24f4491f4cbd5b2234cd2293b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 10
+  fireRate: 6
   recoilPercentage: 3.75
-  projectileSpeed: 40
+  projectileSpeed: 80
   projectileDamage: 5
   projectileMass: 0.05
   projectileLifetime: 3
@@ -3495,11 +3495,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 509d0bd24f4491f4cbd5b2234cd2293b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 25
+  fireRate: 12
   recoilPercentage: 3.75
-  projectileSpeed: 40
+  projectileSpeed: 80
   projectileDamage: 2.5
-  projectileMass: 0.05
+  projectileMass: 0.025
   projectileLifetime: 3
   muzzleOffset: {x: 0, y: 0, z: 1}
   projectilePrefab: {fileID: 114285123796604606, guid: e59fcbfaf4fa58a43947714e92ccd4bf,
@@ -3823,7 +3823,7 @@ MonoBehaviour:
   ramCooldown: 3
   engine: {fileID: 114325312337565180}
   weapon: {fileID: 114320208091881350}
-  shield: {fileID: 114460773300927276}
+  shield: {fileID: 114990261910844858}
   weaponMods: 0
   sideMountDamageModifier: 0.5
   spreadShotDamageModifier: 0.5
@@ -3892,7 +3892,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.6
+  m_Radius: 1.3
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!135 &135692567925445608
 SphereCollider:
