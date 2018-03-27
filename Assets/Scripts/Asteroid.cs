@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using JBirdEngine;
 
-public class Asteroid : ISpawnable, IShootable, ICollidable {
+public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
 
     [Header("Movement Stats")]
     public float rotationMultiplier;
@@ -77,7 +77,7 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
 
     public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
-            DamageNumberController.instance.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos);
+            GameController.instance.dmgNumController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos);
         }
         TakeDamage(dmg);
     }
@@ -108,9 +108,8 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
         parent = p;
     }
 
-    public override void Despawn (bool callParent) {
-        if (callParent) {
-            parent.RemoveObject(this);
+    public override void PostDespawn (bool calledParent) {
+        if (calledParent) {
             StartCoroutine(DespawnAfterParticles());
         }
         else {
@@ -125,7 +124,7 @@ public class Asteroid : ISpawnable, IShootable, ICollidable {
         Destroy(gameObject);
     }
 
-    protected virtual void Kill () {
+    public virtual void Kill () {
         if (!destroyed) {
             destroyed = true;
             int breakApartNumber = Mathf.FloorToInt(Random.Range(breakApartMin, breakApartMax));

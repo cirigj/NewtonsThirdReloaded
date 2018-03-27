@@ -6,8 +6,6 @@ using JBirdEngine;
 
 public class DamageNumberController : MonoBehaviour {
 
-    public static DamageNumberController instance;
-
     public DamageNumber numberPrefab;
     public Gradient defenseGradient;
     public Gradient playerDefenseGradient;
@@ -19,10 +17,6 @@ public class DamageNumberController : MonoBehaviour {
     public float randomDistance;
     public float yDistance;
     public Vector3 eulers;
-
-    void Awake () {
-        Singleton.Manage(this, ref instance);
-    }
 
     public void SpawnDamageNumber (float dmg, float dmgReduction, Vector3 pos, bool isPlayer = false) {
         Vector3 randomPos = pos + (Random.onUnitSphere * randomDistance).SetY(yDistance);

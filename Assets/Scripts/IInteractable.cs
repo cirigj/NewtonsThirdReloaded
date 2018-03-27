@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using JBirdEngine;
 
+public interface IKillable {
+
+    void Kill ();
+
+}
+
 public interface IDamagable {
 
     void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos);

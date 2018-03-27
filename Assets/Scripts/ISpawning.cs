@@ -17,6 +17,13 @@ public abstract class ISpawnable : MonoBehaviour {
     public abstract float GetSpawnRadius ();
     public abstract ISpawner GetParent ();
     public abstract void SetParent (ISpawner parent);
-    public abstract void Despawn (bool callParent);
+
+    public void Despawn (bool callParent) {
+        if (callParent) {
+            GetParent().RemoveObject(this);
+        }
+        PostDespawn(callParent);
+    }
+    public abstract void PostDespawn (bool calledParent);
 
 }

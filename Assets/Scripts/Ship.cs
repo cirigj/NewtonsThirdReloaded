@@ -356,7 +356,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
-            DamageNumberController.instance.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, shipLayer == Layers.PlayerShip);
+            GameController.instance.dmgNumController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, shipLayer == Layers.PlayerShip);
         }
         TakeDamage(dmg);
     }

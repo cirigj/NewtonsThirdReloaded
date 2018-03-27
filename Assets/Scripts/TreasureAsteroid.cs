@@ -41,7 +41,7 @@ public class TreasureAsteroid : Asteroid {
         health += extraHealth;
     }
 
-    protected override void Kill () {
+    public override void Kill () {
         if (isShiny && !destroyed) {
             SpawnPowerUp();
         }
