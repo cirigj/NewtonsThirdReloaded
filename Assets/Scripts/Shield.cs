@@ -53,7 +53,7 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
 
     void SetShieldOpacity () {
         if (shieldRenderer != null) {
-            shieldRenderer.material.SetFloat("_Alpha", (health / maxHealth) * shieldMaxOpacity);
+            shieldRenderer.material.SetFloat("_Alpha", (health / maxHealth) * shieldMaxOpacity * (ship.cloaked ? ship.cloakShieldAlphaModifier : 1f));
         }
     }
 

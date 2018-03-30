@@ -56,8 +56,17 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     public float brokenEngineRecoilModifier;
     public float brokenEngineDamageModifier;
     public float brokenEngineRamModifier;
-    public ShipAbility ability;
+    public Ability ability1;
+    public Ability ability2;
     public float ramCooldown;
+
+    [Header("Cloaking")]
+    public bool cloaked;
+    public float cloakReleasePenalty;
+    public float cloakRegen;
+    public float cloakDrain;
+    public float cloakShieldAlphaModifier;
+    public List<CloakVisualHandler> cloakVisuals;
 
     [Header("Parts")]
     public Engine engine;
@@ -103,7 +112,6 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     public bool mainWeaponActive;
     public bool driftActive;
     public Vector3 lastThrustDirection;
-    public float abilityCooldown;
 
     [Header("Physics")]
     public Layers shipLayer;
@@ -121,6 +129,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     public ParticleSystem coolantParticles;
 
     List<Weapon> weapons;
+    IKillable killable;
 
     float currentMaxSpeed {
         get {
@@ -137,10 +146,20 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
         }
     }
 
+    void Awake () {
+        ability1.ship = this;
+        ability2.ship = this;
+        SetActivateFunction(ability1);
+        SetActivateFunction(ability2);
+        SetDeactivateFunction(ability1);
+        SetDeactivateFunction(ability2);
+    }
+
     void Start () {
         if (collider == null) {
             collider = GetComponent<Collider>();
         }
+        killable = GetComponent<IKillable>();
         SetWeaponPositions();
         SetShipLayer();
     }
@@ -188,7 +207,8 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     void FixedUpdate () {
         // Do this first so we can use abilities as soon as they're ready
-        AbilityCooldown();
+        ability1.Update();
+        ability2.Update();
         // Turn first, for accuracy
         MoveTowardsTargetYaw();
         // Fire weapons
@@ -203,16 +223,14 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
         CalculateOverheatDamage();
     }
 
-    void AbilityCooldown () {
-        abilityCooldown = Mathf.Clamp(abilityCooldown - Time.fixedDeltaTime, 0f, abilityCooldown);
-    }
-
     public void Interact (Projectile proj) {
         proj.Contact(this);
         TakeRecoil(proj.velocity * (proj.mass / mass));
         float dmg = CalculateProjectileDamageReduction(proj.damage);
         TakeDamage(dmg, true, proj.transform.position);
     }
+
+    #region Movement
 
     void TakeRecoil (Vector3 recoil) {
         thrustVelocity += recoil;
@@ -239,7 +257,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     }
 
     public void FireWeaponAndHandleKickback () {
-        if (mainWeaponActive) {
+        if (mainWeaponActive && !cloaked) {
             Vector3 kickback = weapons.Aggregate(Vector3.zero, (v, w) => v + w.TryFire(mass, bulletLayer, currentDamageModifier)); // update this line for spread/side shot
             if (HasMod(ShipModifiers.BustedEngine)) {
                 kickback *= brokenEngineRecoilModifier;
@@ -348,13 +366,17 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
         transform.position += thrustVelocity * Time.fixedDeltaTime;
     }
 
+    #endregion
+
+    #region Health Management
+
     public void CalculateOverheatDamage () {
         if (engine.IsOverheating()) {
             TakeDamage(engine.GetOverheatDamage());
         }
     }
 
-    public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
+    public void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
             GameController.instance.dmgNumController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, shipLayer == Layers.PlayerShip);
         }
@@ -365,6 +387,9 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
         float healthDmg = Mathf.Clamp(dmg - armor, 0f, dmg);
         armor = Mathf.Clamp(armor - dmg, 0f, armor);
         health = Mathf.Clamp(health - healthDmg, 0f, maxHealth);
+        if (killable != null && health == 0f) {
+            killable.Kill();
+        }
     }
 
     public void RepairDamage (float dmg) {
@@ -387,6 +412,8 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
         armorParticles.Play();
         armor = Mathf.Clamp(armor + extra, 0f, maxArmor);
     }
+
+    #endregion
 
     public void ActivateThruster () {
         mainThrusterActive = true;
@@ -413,26 +440,174 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
         mainWeaponActive = false;
     }
 
-    public void ActivateAbility () {
-        switch (ability) {
-            case ShipAbility.RamThrusters:
-                if (abilityCooldown == 0f) {
-                    RamBoost();
+    #region Abilities
+
+    #region Ability Class
+
+    [System.Serializable]
+    public class Ability {
+
+        [HideInInspector]
+        public Ship ship;
+        public ShipAbility type;
+
+        public float cooldown { get; private set; }
+        private float penalty;
+        private bool activated;
+
+        public event Action ActivateFunc = () => { };
+        public event Action DeactivateFunc = () => { };
+
+        public void Update () {
+            if (activated) {
+                Drain();
+                if (cooldown == 1f) {
+                    Deactivate();
                 }
+            }
+            else {
+                Regen();
+            }
+        }
+
+        public bool IsReady () {
+            if (IsHeldAbility()) {
+                return penalty == 0f;
+            }
+            else {
+                return cooldown == 0f;
+            }
+        }
+
+        public void Activate () {
+            if (IsHeldAbility()) {
+                activated = true;
+            }
+            else {
+                SetCooldown();
+            }
+            ActivateFunc.Invoke();
+        }
+
+        public void Deactivate () {
+            if (activated) {
+                activated = false;
+                DeactivateFunc.Invoke();
+                SetPenalty();
+            }
+        }
+
+        public float GetMaxCooldown () {
+            switch (type) {
+                case ShipAbility.RamThrusters:
+                    return ship.ramCooldown;
+                default:
+                    return 1f;
+            }
+        }
+
+        public float GetRegen () {
+            switch (type) {
+                case ShipAbility.CloakingDevice:
+                    return ship.cloakRegen;
+                default:
+                    return 1f;
+            }
+        }
+
+        public float GetDrain () {
+            switch (type) {
+                case ShipAbility.CloakingDevice:
+                    return ship.cloakDrain;
+                default:
+                    return 1f;
+            }
+        }
+
+        public float GetReleasePenalty () {
+            switch (type) {
+                case ShipAbility.CloakingDevice:
+                    return ship.cloakReleasePenalty;
+                default:
+                    return 1f;
+            }
+        }
+
+        public bool IsHeldAbility () {
+            switch (type) {
+                case ShipAbility.CloakingDevice:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        public void SetCooldown () {
+            if (!IsHeldAbility()) {
+                cooldown = GetMaxCooldown();
+            }
+        }
+
+        public void Regen () {
+            if (IsHeldAbility()) {
+                if (penalty > 0f) {
+                    penalty = Mathf.Clamp(penalty - Time.fixedDeltaTime, 0f, penalty);
+                }
+                else {
+                    cooldown = Mathf.Clamp01(cooldown - Time.fixedDeltaTime * GetRegen());
+                }
+            }
+            else {
+                cooldown = Mathf.Clamp(cooldown - Time.fixedDeltaTime, 0f, GetMaxCooldown());
+            }
+        }
+
+        public void Drain () {
+            if (IsHeldAbility()) {
+                cooldown = Mathf.Clamp01(cooldown + Time.fixedDeltaTime * GetDrain());
+            }
+        }
+
+        public void SetPenalty () {
+            if (IsHeldAbility()) {
+                penalty = GetReleasePenalty();
+            }
+        }
+    }
+
+    #endregion
+
+    public void SetActivateFunction (Ability ability) {
+        switch (ability.type) {
+            case ShipAbility.RamThrusters:
+                ability.ActivateFunc += RamBoost;
+                break;
+            case ShipAbility.CloakingDevice:
+                ability.ActivateFunc += Cloak;
                 break;
         }
     }
 
-    public void DeactivateAbility () {
-
+    public void SetDeactivateFunction (Ability ability) {
+        switch (ability.type) {
+            case ShipAbility.CloakingDevice:
+                ability.DeactivateFunc += Uncloak;
+                break;
+        }
     }
 
-    public float GetAbilityCooldown () {
-        switch (ability) {
-            case ShipAbility.RamThrusters:
-                return ramCooldown;
+    public bool ActivateAbility (int id) {
+        Ability ability = id == 1 ? ability1 : ability2;
+        bool ready = ability.IsReady();
+        if (ready) {
+            ability.Activate();
         }
-        return 0f;
+        return ready;
+    }
+
+    public void DeactivateAbility (int id) {
+        Ability ability = id == 1 ? ability1 : ability2;
+        ability.Deactivate();
     }
 
     public void RamBoost () {
@@ -451,9 +626,22 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
             thrustVelocity = newThrust;
         }
         lastThrustDirection = transform.forward;
-        abilityCooldown = ramCooldown;
         engine.PlayParticleBurst();
     }
+
+    public void Cloak () {
+        cloaked = true;
+        cloakVisuals.ForEach(v => v.Cloak());
+    }
+
+    public void Uncloak () {
+        cloaked = false;
+        cloakVisuals.ForEach(v => v.Uncloak());
+    }
+
+    #endregion
+
+    #region Collisions
 
     void OnTriggerEnter (Collider other) {
         ICollidable collidable = other.GetComponent<ICollidable>();
@@ -500,5 +688,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     public float CalculateProjectileDamageReduction (float dmg) {
         return Mathf.Clamp(dmg - dmg * projectileDamageReduction, 0f, Mathf.Infinity);
     }
+
+    #endregion
 
 }

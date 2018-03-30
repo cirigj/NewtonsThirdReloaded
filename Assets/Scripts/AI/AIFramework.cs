@@ -6,7 +6,55 @@ namespace AI {
 
 	public abstract class Condition : ScriptableObject {
 
-        public abstract bool Evaluate (AIBrain brain);
+        public abstract bool Evaluate (AIBrain brain, params ConditionParam[] condParams);
+
+    }
+
+    [System.Serializable]
+    public class ConditionParam {
+
+        [SerializeField]
+        private string param;
+
+        public string AsString () {
+            return param;
+        }
+
+        public float AsFloat () {
+            float result;
+            if (float.TryParse(param, out result)) {
+                return result;
+            }
+            throw new System.ArgumentException(string.Format("Param '{0}' cannot be converted to float!"));
+        }
+
+        public int AsInt () {
+            int result;
+            if (int.TryParse(param, out result)) {
+                return result;
+            }
+            throw new System.ArgumentException(string.Format("Param '{0}' cannot be converted to int!"));
+        }
+
+        public bool AsBool () {
+            bool result;
+            if (bool.TryParse(param, out result)) {
+                return result;
+            }
+            throw new System.ArgumentException(string.Format("Param '{0}' cannot be converted to bool!"));
+        }
+
+    }
+
+    [System.Serializable]
+    public class ConditionInstance {
+
+        public Condition condition;
+        public List<ConditionParam> conditionParams;
+
+        public bool Evaluate (AIBrain brain) {
+            return condition.Evaluate(brain, conditionParams.ToArray());
+        }
 
     }
 
@@ -19,7 +67,7 @@ namespace AI {
     [System.Serializable]
     public class Response {
 
-        public Condition condition;
+        public List<ConditionInstance> conditions;
         public Action action;
 
     }
@@ -27,7 +75,7 @@ namespace AI {
     [System.Serializable]
     public class Preference {
 
-        public Condition condition;
+        public List<ConditionInstance> conditions;
         public AIBehaviour behaviour;
 
     }

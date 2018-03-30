@@ -9,9 +9,16 @@ public class GameController : MonoBehaviour {
 
     public Ship playerShip;
     public DamageNumberController dmgNumController;
+    public ShipUIController shipUI;
+    public GameOverController gameOverController;
 
     void Awake () {
         Singleton.Manage(this, ref instance);
+    }
+
+    public void GameOver () {
+        shipUI.SetActive(false);
+        gameOverController.FadeIn();
     }
 
 }

@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace AI {
 
-    public class AIBrain : ISpawnable {
+    public class AIBrain : ISpawnable, IKillable {
 
         #region ISpawnable Implementation
 
+        [Header("Spawn Control")]
         protected ISpawner parent;
         public float spawnRadius;
 
@@ -25,18 +27,35 @@ namespace AI {
         }
 
         public override void PostDespawn (bool calledParent) {
+            Kill();
+        }
+
+        #endregion
+
+        #region IKillable Implementation
+
+        public void Kill () {
             Destroy(gameObject);
         }
 
         #endregion
 
+        [Header("AI Logic")]
+        public bool isActive;
+
         public List<Preference> preferences;
         public AIBehaviour defaultBehaviour;
+
+        void FixedUpdate () {
+            if (isActive) {
+                Act();
+            }
+        }
 
         void Act () {
             Action currentAction = null;
             foreach (Preference pref in preferences) {
-                if (pref.condition.Evaluate(this)) {
+                if (pref.conditions.Aggregate(true, (b, c) => b && c.Evaluate(this))) {
                     currentAction = pref.behaviour.GetAction(this);
                     break;
                 }
@@ -44,7 +63,9 @@ namespace AI {
             if (currentAction == null) {
                 currentAction = defaultBehaviour.GetAction(this);
             }
-            currentAction.Execute(this);
+            if (currentAction != null) {
+                currentAction.Execute(this);
+            }
         }
 
     }

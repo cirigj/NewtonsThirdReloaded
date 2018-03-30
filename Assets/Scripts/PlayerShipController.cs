@@ -2,49 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShipController : MonoBehaviour {
+public class PlayerShipController : MonoBehaviour, IKillable {
 
     public Ship ship;
-
-    protected void WeaponTrigger () {
-        ship.ActivateWeapon();
-    }
-
-    protected void WeaponRelease () {
-        ship.DeactivateWeapon();
-    }
-
-    protected void AbilityTrigger () {
-        ship.ActivateAbility();
-    }
-
-    protected void AbilityRelease () {
-        ship.DeactivateAbility();
-    }
-
-    protected void EngineTrigger () {
-        ship.ActivateThruster();
-    }
-
-    protected void EngineRelease () {
-        ship.DeactivateThruster();
-    }
-
-    protected void DriftTrigger () {
-        ship.ActivateDrift();
-    }
-
-    protected void DriftRelease () {
-        ship.DeactivateDrift();
-    }
-
-    protected void GotoYaw (float x, float y) {
-        ship.SetTargetYaw(new Vector2(x, y));
-    }
-
-}
-
-public class PlayerShipController : ShipController {
+    public ParticleSystem deathParticles;
 
     public float yawDeadzone;
 
@@ -62,7 +23,11 @@ public class PlayerShipController : ShipController {
 
     [SerializeField]
     [JBirdEngine.EditorHelper.ViewOnly]
-    private bool abilityControl;
+    private bool ability1Control;
+
+    [SerializeField]
+    [JBirdEngine.EditorHelper.ViewOnly]
+    private bool ability2Control;
 
     void Update () {
         GetInputs();
@@ -74,26 +39,27 @@ public class PlayerShipController : ShipController {
         float yawV = Input.GetAxis("Vertical");
         float fire = Input.GetAxis("Fire");
         float thrust = Input.GetAxis("Thrust");
-        float ability = Input.GetAxis("Ability");
+        float ability1 = Input.GetAxis("Ability1");
+        float ability2 = Input.GetAxis("Ability2");
         float drift = Input.GetAxis("Drift");
 
         // Yaw Control
         if (yawH >= yawDeadzone || yawH <= -yawDeadzone
          || yawV >= yawDeadzone || yawV <= -yawDeadzone) {
-            GotoYaw(yawH, yawV);
+            ship.SetTargetYaw(new Vector2(yawH, yawV));
         }
 
         // Weapon Trigger/Release
         if (!fireControl) {
             if (fire > 0) {
                 fireControl = true;
-                WeaponTrigger();
+                ship.ActivateWeapon();
             }
         }
         else {
             if (fire <= 0) {
                 fireControl = false;
-                WeaponRelease();
+                ship.DeactivateWeapon();
             }
         }
 
@@ -101,13 +67,13 @@ public class PlayerShipController : ShipController {
         if (!thrustControl) {
             if (thrust > 0) {
                 thrustControl = true;
-                EngineTrigger();
+                ship.ActivateThruster();
             }
         }
         else {
             if (thrust <= 0) {
                 thrustControl = false;
-                EngineRelease();
+                ship.DeactivateThruster();
             }
         }
 
@@ -115,29 +81,47 @@ public class PlayerShipController : ShipController {
         if (!driftControl) {
             if (drift > 0) {
                 driftControl = true;
-                DriftTrigger();
+                ship.ActivateDrift();
             }
         }
         else {
             if (drift <= 0) {
                 driftControl = false;
-                DriftRelease();
+                ship.DeactivateDrift();
             }
         }
 
-        // Ability Trigger/Release
-        if (!abilityControl) {
-            if (ability > 0) {
-                abilityControl = true;
-                AbilityTrigger();
+        // Ability 1 Trigger/Release
+        if (!ability1Control) {
+            if (ability1 > 0 && ship.ActivateAbility(1)) {
+                ability1Control = true;
             }
         }
         else {
-            if (ability <= 0) {
-                abilityControl = false;
-                AbilityRelease();
+            if (ability1 <= 0) {
+                ability1Control = false;
+                ship.DeactivateAbility(1);
             }
         }
+
+        // Ability 2 Trigger/Release
+        if (!ability2Control) {
+            if (ability2 > 0 && ship.ActivateAbility(2)) {
+                ability2Control = true;
+            }
+        }
+        else {
+            if (ability2 <= 0) {
+                ability2Control = false;
+                ship.DeactivateAbility(2);
+            }
+        }
+    }
+
+    public void Kill() {
+        Instantiate(deathParticles, transform.position, Quaternion.identity);
+        gameObject.SetActive(false);
+        GameController.instance.GameOver();
     }
 
 }

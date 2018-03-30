@@ -215,6 +215,12 @@ public class HealthUiBar : UiBar {
 
 }
 
+[System.Serializable]
+public class AbilityIcon {
+    public ShipAbility ability;
+    public Sprite Icon;
+}
+
 public class ShipUIController : MonoBehaviour {
 
     public Ship target;
@@ -223,12 +229,16 @@ public class ShipUIController : MonoBehaviour {
     public HealthUiBar healthBar;
     public ShieldUiBar shieldBar;
     public UiBar overheatBar;
-    public UiBar abilityBar;
+    public UiBar ability1Bar;
+    public Image ability1Icon;
+    public UiBar abilityBar2;
+    public Image ability2Icon;
     public CoolantUiBar coolantBar;
 
     public UiBar warningLight;
 
     public AnimationCurve coolantCorrectionCurve;
+    public List<AbilityIcon> abilityIcons;
 
     float VolumetricCorrection (float percent) {
         return coolantCorrectionCurve.Evaluate(percent);
@@ -236,6 +246,17 @@ public class ShipUIController : MonoBehaviour {
 
     void Start () {
         coolantBar.progress.material = new Material(coolantBar.progress.material);
+
+        ability1Icon.sprite = GetIcon(target.ability1.type);
+        ability2Icon.sprite = GetIcon(target.ability2.type);
+    }
+
+    Sprite GetIcon (ShipAbility ability) {
+        AbilityIcon abIcon = abilityIcons.Where(a => a.ability == ability).FirstOrDefault();
+        if (abIcon != null) {
+            return abIcon.Icon;
+        }
+        return null;
     }
 
     void Update () {
@@ -258,7 +279,8 @@ public class ShipUIController : MonoBehaviour {
         coolantBar.SetProgress(this, VolumetricCorrection(target.engine.coolant / target.engine.maxCoolant));
         shieldBar.SetProgress(this, target.shield.health / target.shield.maxHealth);
         healthBar.SetProgress(this, target, overheatBar.currentFlashTime);
-        abilityBar.SetProgress(this, 1f - target.abilityCooldown / target.GetAbilityCooldown());
+        ability1Bar.SetProgress(this, 1f - target.ability1.cooldown / target.ability1.GetMaxCooldown());
+        abilityBar2.SetProgress(this, 1f - target.ability2.cooldown / target.ability2.GetMaxCooldown());
     }
 
 }
