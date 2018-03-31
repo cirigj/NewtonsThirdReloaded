@@ -3,6 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using JBirdEngine;
 
+public enum Layers {
+    PlayerShip = 8,
+    PlayerBullet = 9,
+    EnemyShip = 10,
+    EnemyBullet = 11,
+    NeutralObject = 12,
+    PowerUp = 13,
+}
+
 public interface IKillable {
 
     void Kill ();
@@ -65,6 +74,18 @@ public static class ICollidableExtensions {
         // Take damage based on the converted KE
         me.TakeDamage(me.CalculateCollisionDamageReduction(target.GetDamage(convertedKE)), false, VectorHelper.Midpoint(me.GetPosition(), target.GetPosition()));
         target.TakeDamage(target.CalculateCollisionDamageReduction(me.GetDamage(convertedKE)), false, VectorHelper.Midpoint(me.GetPosition(), target.GetPosition()));
+
+        // Communicate collision to parent spawner if other is player ship
+        try {
+            ISpawnable spawnable = (me as MonoBehaviour).GetComponent<ISpawnable>();
+            PlayerShipController playerShip = (target as MonoBehaviour).GetComponent<PlayerShipController>();
+            if (spawnable != null && playerShip != null) {
+                spawnable.GetParent().SavePlayerCollision(playerShip.transform.position);
+            }
+        }
+        catch (System.Exception e) {
+            Debug.LogWarningFormat("Using ICollidable that isn't a MonoBehaviour! How?/nInner Exception: '{0}'", e);
+        }
     }
 
 }

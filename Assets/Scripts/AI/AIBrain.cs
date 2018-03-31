@@ -8,11 +8,14 @@ namespace AI {
 
     public class AIBrain : ISpawnable, IKillable {
 
+        public Ship ship;
+
         #region ISpawnable Implementation
 
         [Header("Spawn Control")]
         protected ISpawner parent;
         public float spawnRadius;
+        public ParticleSystem deathParticles;
 
         public override ISpawner GetParent () {
             return parent;
@@ -27,7 +30,12 @@ namespace AI {
         }
 
         public override void PostDespawn (bool calledParent) {
-            Kill();
+            if (calledParent) {
+                Explode();
+            }
+            else {
+                Destroy(gameObject);
+            }
         }
 
         #endregion
@@ -35,10 +43,15 @@ namespace AI {
         #region IKillable Implementation
 
         public void Kill () {
-            Destroy(gameObject);
+            Despawn(true);
         }
 
         #endregion
+
+        public void Explode () {
+            Instantiate(deathParticles, transform.position, Quaternion.identity);
+            Destroy(gameObject);
+        }
 
         [Header("AI Logic")]
         public bool isActive;

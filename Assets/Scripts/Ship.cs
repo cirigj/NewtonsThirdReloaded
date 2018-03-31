@@ -19,14 +19,6 @@ public enum ShipAbility {
     ChargeShot = 4,
 }
 
-public enum Layers {
-    PlayerShip = 8,
-    PlayerBullet = 9,
-    EnemyShip = 10,
-    EnemyBullet = 11,
-    NeutralObject = 12,
-}
-
 [System.Serializable]
 public class PartAnchor {
     public Vector3 relativePos;

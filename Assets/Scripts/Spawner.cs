@@ -24,6 +24,8 @@ public class Spawner : ISpawner {
     public float spawnDistanceMax;
     public float despawnDistance;
 
+    public bool yRotationOnly;
+
     List<ISpawnable> objects;
 
     public float spawnTime;
@@ -38,7 +40,8 @@ public class Spawner : ISpawner {
         objects = new List<ISpawnable>();
     }
 
-    void Start () {
+    protected override void Start () {
+        base.Start();
         spawnRoutine = StartCoroutine(SpawnObjects(startDistanceMin, startDistanceMax, false));
     }
 
@@ -95,7 +98,7 @@ public class Spawner : ISpawner {
         if (tries == spawnRetries) {
             return null;
         }
-        ISpawnable spawn = Instantiate(prefab, pos, Random.rotation);
+        ISpawnable spawn = Instantiate(prefab, pos, yRotationOnly ? Quaternion.Euler(0f, Random.Range(0f, 360f), 0f) : Random.rotation);
         spawn.SetParent(this);
         return spawn;
     }

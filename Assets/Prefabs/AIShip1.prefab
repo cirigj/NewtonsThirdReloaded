@@ -266,6 +266,7 @@ GameObject:
   - component: {fileID: 114717036855989272}
   - component: {fileID: 54246379856238426}
   - component: {fileID: 135501153352374744}
+  - component: {fileID: 114221077218442272}
   m_Layer: 0
   m_Name: AIShip1
   m_TagString: Untagged
@@ -2162,6 +2163,24 @@ MonoBehaviour:
   - {fileID: 198137621749349022}
   - {fileID: 198168929753347356}
   burstParticles: {fileID: 198880771035080476}
+--- !u!114 &114221077218442272
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1206497089520354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f9397db1bdf12e4d9aa573f74e1b236, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ship: {fileID: 114717036855989272}
+  spawnRadius: 5
+  deathParticles: {fileID: 198834000024663632, guid: 30557da88ac0af341a5cf97134feafa0,
+    type: 2}
+  isActive: 1
+  preferences: []
+  defaultBehaviour: {fileID: 11400000, guid: 94370ebb91a6ad54980f301f70e0226c, type: 2}
 --- !u!114 &114303131454585470
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2238,7 +2257,7 @@ MonoBehaviour:
   projectileDamage: 5
   projectileMass: 0.05
   projectileLifetime: 3
-  muzzleOffset: {x: 0, y: 0, z: 1}
+  muzzleOffset: {x: 0, y: 0, z: 2}
   projectilePrefab: {fileID: 114713667274818776, guid: 24665723b86e75241bc7e68fd3d469eb,
     type: 2}
   cooldown: 0
@@ -2287,7 +2306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mass: 5
-  maxHealth: 100
+  maxHealth: 50
   maxArmor: 0
   projectileDamageReduction: 0
   lowHealthActual: 0
@@ -2296,8 +2315,19 @@ MonoBehaviour:
   brokenEngineRecoilModifier: 5
   brokenEngineDamageModifier: 2
   brokenEngineRamModifier: 0.1
-  ability: 1
+  ability1:
+    ship: {fileID: 0}
+    type: 0
+  ability2:
+    ship: {fileID: 0}
+    type: 0
   ramCooldown: 3
+  cloaked: 0
+  cloakReleasePenalty: 0
+  cloakRegen: 0
+  cloakDrain: 0
+  cloakShieldAlphaModifier: 0
+  cloakVisuals: []
   engine: {fileID: 114148105984422128}
   weapon: {fileID: 114478466472197698}
   shield: {fileID: 114336068021720476}
@@ -2337,7 +2367,6 @@ MonoBehaviour:
   mainWeaponActive: 0
   driftActive: 0
   lastThrustDirection: {x: 0, y: 0, z: 0}
-  abilityCooldown: 0
   shipLayer: 10
   bulletLayer: 11
   collider: {fileID: 0}
@@ -74241,7 +74270,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74293,7 +74322,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74345,7 +74374,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74397,7 +74426,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74449,7 +74478,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74501,7 +74530,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74553,7 +74582,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74605,7 +74634,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74657,7 +74686,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74709,7 +74738,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74761,7 +74790,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74813,7 +74842,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74865,7 +74894,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74917,7 +74946,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -74969,7 +74998,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -75021,7 +75050,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -75073,7 +75102,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -75125,7 +75154,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -75177,7 +75206,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -75229,7 +75258,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -75281,7 +75310,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -75333,7 +75362,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
