@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using JBirdEngine;
 
 namespace AI {
 
@@ -50,17 +51,52 @@ namespace AI {
 
         public void Explode () {
             Instantiate(deathParticles, transform.position, Quaternion.identity);
+            SpawnPowerUps();
             Destroy(gameObject);
         }
 
-        [Header("AI Logic")]
-        public bool isActive;
+        [Header("Brain Parameters")]
+        public bool isActive = true;
+        public float awarenessRadius = 10f;
+        public float awarenessAngle = 360f;
+        public float extrapolationRadius = 25f;
+        public Color foundColor;
+        public Color nearbyColor;
+        public Color lostColor;
 
+        [Header("Behaviours")]
         public List<Preference> preferences;
         public AIBehaviour defaultBehaviour;
 
+        [Header("Runtime")]
+        public Vector3? extrapolatedPlayerPosition;
+        public Vector3? lastKnownPlayerVelocity;
+        public bool playerPositionKnown;
+        public bool playerNearby;
+        FloatingText currentIndicator;
+
+        [Header("Drops")]
+        public LootTable lootTable;
+        public float dropsMin;
+        public float dropsMax;
+
+        private Ship _playerShip;
+        public Ship playerShip {
+            get {
+                if (_playerShip == null) {
+                    _playerShip = GameController.instance.playerShip;
+                }
+                return _playerShip;
+            }
+        }
+
+        void Start () {
+            ship.onProjectileHit += ReactToBullet;
+        }
+
         void FixedUpdate () {
             if (isActive) {
+                TrackPlayer();
                 Act();
             }
         }
@@ -78,6 +114,71 @@ namespace AI {
             }
             if (currentAction != null) {
                 currentAction.Execute(this);
+            }
+        }
+
+        void TrackPlayer () {
+            if (playerShip.health > 0f && !playerShip.cloaked && this.ObjectWithinConeOfVision(playerShip.transform, awarenessRadius, awarenessAngle) && this.PlayerVisible()) {
+                extrapolatedPlayerPosition = playerShip.transform.position;
+                lastKnownPlayerVelocity = playerShip.thrustVelocity;
+                PlayerFound();
+            }
+            else if (playerShip.health > 0f && extrapolatedPlayerPosition.HasValue && this.PositionWithinRange(extrapolatedPlayerPosition.Value, extrapolationRadius)) {
+                extrapolatedPlayerPosition = extrapolatedPlayerPosition + lastKnownPlayerVelocity * Time.fixedDeltaTime;
+                PlayerNearby();
+            }
+            else {
+                extrapolatedPlayerPosition = null;
+                lastKnownPlayerVelocity = null;
+                PlayerLost();
+            }
+        }
+
+        void ReactToBullet (Projectile proj) {
+            extrapolatedPlayerPosition = transform.position - proj.velocity / 5f;
+            lastKnownPlayerVelocity = playerShip.thrustVelocity;
+            PlayerNearby(true);
+        }
+
+        void PlayerFound () {
+            if (!playerPositionKnown) {
+                SpawnIndicator("!!!", foundColor);
+                playerPositionKnown = true;
+                playerNearby = true;
+            }
+        }
+
+        void PlayerNearby (bool reactionary = false) {
+            if ((!reactionary && playerPositionKnown) || (reactionary && !playerNearby)) {
+                SpawnIndicator("!?", nearbyColor);
+                playerPositionKnown = false;
+                playerNearby = true;
+            }
+        }
+
+        void PlayerLost () {
+            if (playerNearby) {
+                if (playerShip.health > 0f) {
+                    SpawnIndicator("???", lostColor);
+                }
+                playerPositionKnown = false;
+                playerNearby = false;
+            }
+        }
+
+        void SpawnIndicator (string str, Color color) {
+            if (currentIndicator) {
+                currentIndicator.Kill();
+                currentIndicator = null;
+            }
+            currentIndicator = GameController.instance.textController.SpawnText(str, transform.position, color, 2, parent: transform);
+        }
+
+        void SpawnPowerUps () {
+            int drops = Mathf.FloorToInt(UnityEngine.Random.Range(dropsMin, dropsMax));
+            PowerUp choice = lootTable.GetLoot(drops).FirstOrDefault();
+            if (choice != null) {
+                Instantiate(choice, transform.position + UnityEngine.Random.onUnitSphere.SetY(0f).normalized, Quaternion.identity);
             }
         }
 

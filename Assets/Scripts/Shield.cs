@@ -34,6 +34,7 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
     public float damageModifier;
     public float damageReductionModifier;
     public float elasticity;
+    public float collisionRadius;
 
     void Start () {
         if (collider == null) {
@@ -70,11 +71,12 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
         proj.Contact(this);
         float dmg = CalculateProjectileDamageReduction(proj.damage);
         TakeDamage(dmg, true, proj.transform.position);
+        ship.onProjectileHit.Invoke(proj);
     }
 
     public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
-            GameController.instance.dmgNumController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, ship.shipLayer == Layers.PlayerShip);
+            GameController.instance.textController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, ship.shipLayer == Layers.PlayerShip);
         }
         TakeDamage(dmg);
     }
@@ -98,6 +100,10 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
         }
     }
 
+    public float GetCollisionRadius () {
+        return collisionRadius;
+    }
+
     public float GetMass () {
         return ship.mass;
     }
@@ -113,6 +119,10 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
 
     public Vector3 GetPosition () {
         return ship.transform.position;
+    }
+
+    public void SetPosition (Vector3 pos) {
+        ship.transform.position = pos;
     }
 
     public float GetElasticity () {

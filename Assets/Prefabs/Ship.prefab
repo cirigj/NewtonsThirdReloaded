@@ -3239,7 +3239,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 1
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 4
   m_CollisionDetection: 1
 --- !u!54 &54661148993488100
 Rigidbody:
@@ -3293,12 +3293,12 @@ MeshCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1955423158540874}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Convex: 1
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
+  m_InflateMesh: 1
+  m_SkinWidth: 0.1
   m_Mesh: {fileID: 4300000, guid: cb53d9bb74256d14087f31cf58919e2c, type: 3}
 --- !u!64 &64375102148830844
 MeshCollider:
@@ -3307,12 +3307,12 @@ MeshCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1762420050556374}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Convex: 1
-  m_InflateMesh: 0
-  m_SkinWidth: 0.01
+  m_InflateMesh: 1
+  m_SkinWidth: 0.1
   m_Mesh: {fileID: 4300000, guid: cb53d9bb74256d14087f31cf58919e2c, type: 3}
 --- !u!108 &108101994296962646
 Light:
@@ -3427,7 +3427,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 509d0bd24f4491f4cbd5b2234cd2293b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 6
+  fireRate: 12
   recoilPercentage: 3.75
   projectileSpeed: 80
   projectileDamage: 5
@@ -3450,19 +3450,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ship: {fileID: 114994812660856354}
   root: {fileID: 4984759596105496}
-  maxHealth: 15
-  rechargeRate: 0.5
+  maxHealth: 45
+  rechargeRate: 3
   shieldHitCooldownPenalty: 0.5
   shieldDownCooldownPenalty: 0.5
   projectileDamageReduction: 0
   shieldMaxOpacity: 0.35
   shieldRenderer: {fileID: 23189911044057092}
-  health: 15
+  health: 45
   rechargeCooldown: 0
   collider: {fileID: 0}
   damageModifier: 0.00375
   damageReductionModifier: 0.85
   elasticity: 0.01
+  collisionRadius: 1.4
 --- !u!114 &114220501353628528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3541,7 +3542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 509d0bd24f4491f4cbd5b2234cd2293b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireRate: 12
+  fireRate: 24
   recoilPercentage: 3.75
   projectileSpeed: 80
   projectileDamage: 2.5
@@ -3820,19 +3821,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ship: {fileID: 114994812660856354}
   root: {fileID: 4799195432188728}
-  maxHealth: 15
-  rechargeRate: 4
-  shieldHitCooldownPenalty: 0.5
+  maxHealth: 60
+  rechargeRate: 12
+  shieldHitCooldownPenalty: 1
   shieldDownCooldownPenalty: 3
   projectileDamageReduction: 0.5
   shieldMaxOpacity: 0.35
   shieldRenderer: {fileID: 23010352939186650}
-  health: 20
+  health: 60
   rechargeCooldown: 0
   collider: {fileID: 0}
   damageModifier: 0.00375
   damageReductionModifier: 0.85
   elasticity: 0.01
+  collisionRadius: 2.5
 --- !u!114 &114581013642563434
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3946,19 +3948,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ship: {fileID: 114994812660856354}
   root: {fileID: 4656443833307270}
-  maxHealth: 30
-  rechargeRate: 2
+  maxHealth: 90
+  rechargeRate: 18
   shieldHitCooldownPenalty: 0.5
-  shieldDownCooldownPenalty: 1.5
+  shieldDownCooldownPenalty: 1
   projectileDamageReduction: 0.5
   shieldMaxOpacity: 0.35
   shieldRenderer: {fileID: 23807457494345298}
-  health: 30
+  health: 90
   rechargeCooldown: 0
   collider: {fileID: 0}
   damageModifier: 0.00375
   damageReductionModifier: 0.85
   elasticity: 0.01
+  collisionRadius: 2.5
 --- !u!114 &114723401607554730
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4006,19 +4009,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ship: {fileID: 114994812660856354}
   root: {fileID: 4300688303067218}
-  maxHealth: 30
-  rechargeRate: 2
+  maxHealth: 90
+  rechargeRate: 18
   shieldHitCooldownPenalty: 0.5
-  shieldDownCooldownPenalty: 1.5
+  shieldDownCooldownPenalty: 1
   projectileDamageReduction: 0.5
   shieldMaxOpacity: 0.35
   shieldRenderer: {fileID: 23822732477146768}
-  health: 30
+  health: 90
   rechargeCooldown: 0
   collider: {fileID: 0}
   damageModifier: 0.00375
   damageReductionModifier: 0.85
   elasticity: 0.005
+  collisionRadius: 2.5
 --- !u!114 &114990507286015652
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4127,6 +4131,7 @@ MonoBehaviour:
   damageModifier: 0.005
   damageReductionModifier: 0.4
   elasticity: 0.01
+  collisionRadius: 1.3
   healthParticles: {fileID: 198959622505939332}
   armorParticles: {fileID: 198327553674059370}
   coolantParticles: {fileID: 198872476933782210}

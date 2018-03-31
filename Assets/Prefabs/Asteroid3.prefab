@@ -86,7 +86,7 @@ Transform:
   m_GameObject: {fileID: 1024726228538064}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
+  m_LocalScale: {x: 4, y: 4, z: 4}
   m_Children:
   - {fileID: 4902771441587752}
   m_Father: {fileID: 4508904789061164}
@@ -202,8 +202,8 @@ MonoBehaviour:
   startSpeed: 0.2
   maxSpeed: 10
   health: 50
-  mass: 54
-  radius: 3
+  mass: 48
+  radius: 4
   projectileDamageReduction: 0
   breakApartPrefab: {fileID: 114142975514263118, guid: 5623c665a61d27e4a900fafffd4b6e76,
     type: 2}
@@ -220,9 +220,9 @@ MonoBehaviour:
   startSpeedSet: 0
   parent: {fileID: 0}
   firstIndex: 0
-  damageModifier: 0.00175
+  damageModifier: 0.0105
   damageReductionModifier: -0.25
-  elasticity: 0.002
+  elasticity: 0.001
   collider: {fileID: 0}
 --- !u!135 &135072559996660998
 SphereCollider:
@@ -234,7 +234,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 3
+  m_Radius: 4
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!198 &198855004306446326
 ParticleSystem:
@@ -447,7 +447,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 1.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -760,7 +760,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 3
+      value: 4
       mode: 0
       spread: 0
       speed:
@@ -3517,7 +3517,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

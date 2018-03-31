@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour {
     public static GameController instance;
 
     public Ship playerShip;
-    public DamageNumberController dmgNumController;
+    public FloatingTextController textController;
     public ShipUIController shipUI;
     public GameOverController gameOverController;
 

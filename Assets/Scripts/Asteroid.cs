@@ -77,7 +77,7 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
 
     public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
-            GameController.instance.dmgNumController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos);
+            GameController.instance.textController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos);
         }
         TakeDamage(dmg);
     }
@@ -159,6 +159,10 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
         }
     }
 
+    public float GetCollisionRadius () {
+        return radius;
+    }
+
     public float GetMass () {
         return mass;
     }
@@ -174,8 +178,12 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
         }
     }
 
-    public Vector3 GetPosition() {
+    public Vector3 GetPosition () {
         return transform.position;
+    }
+
+    public void SetPosition (Vector3 pos) {
+        transform.position = pos;
     }
 
     public float GetElasticity () {

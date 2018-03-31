@@ -250,7 +250,7 @@ MonoBehaviour:
   startSpeedSet: 0
   parent: {fileID: 0}
   firstIndex: 0
-  damageModifier: 0.00125
+  damageModifier: 0.0075
   damageReductionModifier: -1
   elasticity: 0.015
   collider: {fileID: 0}
@@ -261,16 +261,7 @@ MonoBehaviour:
   isShiny: 0
   sparkles: {fileID: 198872762265786402}
   extraHealth: 40
-  powerUps:
-  - prefab: {fileID: 114400317953860624, guid: 111f5a88f1589e545aa3e4f1c418b8b5, type: 2}
-    chanceMin: 0
-    chanceMax: 0.5
-  - prefab: {fileID: 114093015015723748, guid: e4a73c7920c5a68458767fb33f1c696c, type: 2}
-    chanceMin: 0.5
-    chanceMax: 0.75
-  - prefab: {fileID: 114792974516612658, guid: 35e7330dfe74e3f478d1e8562e4e09a6, type: 2}
-    chanceMin: 0.75
-    chanceMax: 1
+  lootTable: {fileID: 11400000, guid: e32248b06ebb93248b2bc8ec04983be6, type: 2}
 --- !u!135 &135098454612119268
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -3762,7 +3753,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 1.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -6884,7 +6875,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

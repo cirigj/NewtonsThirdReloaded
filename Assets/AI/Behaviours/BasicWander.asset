@@ -11,5 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 512dd9166014e674d9bd7393416a8993, type: 3}
   m_Name: BasicWander
   m_EditorClassIdentifier: 
-  responses: []
+  responses:
+  - conditions:
+    - condition: {fileID: 11400000, guid: 9e3e8687207e42c408e9cfeb3362890f, type: 2}
+      conditionParams: []
+    action: {fileID: 11400000, guid: 4fcb26aa9c34772409b01dd3f14fc1d4, type: 2}
   defaultAction: {fileID: 11400000, guid: eab0224aa32a3f04288a9240a8f3f49f, type: 2}

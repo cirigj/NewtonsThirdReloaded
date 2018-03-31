@@ -114,6 +114,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     public float damageModifier;
     public float damageReductionModifier;
     public float elasticity;
+    public float collisionRadius;
 
     [Header("Particles")]
     public ParticleSystem healthParticles;
@@ -122,6 +123,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     List<Weapon> weapons;
     IKillable killable;
+    public Action<Projectile> onProjectileHit = (p) => { };
 
     float currentMaxSpeed {
         get {
@@ -220,6 +222,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
         TakeRecoil(proj.velocity * (proj.mass / mass));
         float dmg = CalculateProjectileDamageReduction(proj.damage);
         TakeDamage(dmg, true, proj.transform.position);
+        onProjectileHit.Invoke(proj);
     }
 
     #region Movement
@@ -370,7 +373,7 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     public void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
-            GameController.instance.dmgNumController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, shipLayer == Layers.PlayerShip);
+            GameController.instance.textController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, shipLayer == Layers.PlayerShip);
         }
         TakeDamage(dmg);
     }
@@ -649,6 +652,10 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
         }
     }
 
+    public float GetCollisionRadius () {
+        return collisionRadius;
+    }
+
     public float GetMass () {
         return mass;
     }
@@ -663,6 +670,10 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     public Vector3 GetPosition () {
         return transform.position;
+    }
+
+    public void SetPosition (Vector3 pos) {
+        transform.position = pos;
     }
 
     public float GetElasticity () {

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Name: Wander
   m_EditorClassIdentifier: 
   circleDistance: 20
-  circleRadius: 0.5
+  circleRadius: 1
   overheatThresholdMax: 0.8
   overheatThresholdMin: 0.3
+  randomLookTimeMin: 3
+  randomLookTimeMax: 5

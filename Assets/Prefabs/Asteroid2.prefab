@@ -202,7 +202,7 @@ MonoBehaviour:
   startSpeed: 0.2
   maxSpeed: 10
   health: 25
-  mass: 16
+  mass: 12
   radius: 2
   projectileDamageReduction: 0
   breakApartPrefab: {fileID: 114661123600500562, guid: 7c9768bdb9d48224d9f53299300e3b81,
@@ -220,7 +220,7 @@ MonoBehaviour:
   startSpeedSet: 0
   parent: {fileID: 0}
   firstIndex: 0
-  damageModifier: 0.0015
+  damageModifier: 0.009
   damageReductionModifier: -0.5
   elasticity: 0.009
   collider: {fileID: 0}
@@ -447,7 +447,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 1.5
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -3517,7 +3517,7 @@ ParticleSystemRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: b7f4bd6a0314aa045af57bcd7f5e252a, type: 2}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

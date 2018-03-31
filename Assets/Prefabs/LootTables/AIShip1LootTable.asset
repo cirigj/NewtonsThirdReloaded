@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 045df914f498ca847a6508e73074ebe6, type: 3}
+  m_Name: AIShip1LootTable
+  m_EditorClassIdentifier: 
+  powerUps:
+  - prefab: {fileID: 114400317953860624, guid: 111f5a88f1589e545aa3e4f1c418b8b5, type: 2}
+    chanceMin: 0
+    chanceMax: 0.8
+  - prefab: {fileID: 114792974516612658, guid: 35e7330dfe74e3f478d1e8562e4e09a6, type: 2}
+    chanceMin: 0.8
+    chanceMax: 1

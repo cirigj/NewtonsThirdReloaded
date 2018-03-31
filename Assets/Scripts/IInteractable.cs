@@ -40,7 +40,9 @@ public interface ICollidable : IDamagable {
     float GetDamage (float momentumDiff);
     float CalculateCollisionDamageReduction (float dmg);
     Vector3 GetPosition ();
+    void SetPosition (Vector3 pos);
     float GetElasticity ();
+    float GetCollisionRadius ();
 
 }
 
@@ -75,6 +77,16 @@ public static class ICollidableExtensions {
         me.TakeDamage(me.CalculateCollisionDamageReduction(target.GetDamage(convertedKE)), false, VectorHelper.Midpoint(me.GetPosition(), target.GetPosition()));
         target.TakeDamage(target.CalculateCollisionDamageReduction(me.GetDamage(convertedKE)), false, VectorHelper.Midpoint(me.GetPosition(), target.GetPosition()));
 
+        // Move to positions so the colliders aren't inside each other
+        float totalMaxRadius = me.GetCollisionRadius() + target.GetCollisionRadius();
+        float actualMaxRadius = (target.GetPosition() - me.GetPosition()).magnitude;
+        float radiusDifference = totalMaxRadius - actualMaxRadius;
+        float myRadiusPercentage = me.GetCollisionRadius() / totalMaxRadius;
+        Vector3 weightedMidpoint = me.GetPosition() + directionTowardsOther * actualMaxRadius * myRadiusPercentage;
+
+        target.SetPosition(weightedMidpoint + directionTowardsOther * target.GetCollisionRadius());
+        me.SetPosition(weightedMidpoint - directionTowardsOther * me.GetCollisionRadius());
+
         // Communicate collision to parent spawner if other is player ship
         try {
             ISpawnable spawnable = (me as MonoBehaviour).GetComponent<ISpawnable>();
@@ -84,7 +96,7 @@ public static class ICollidableExtensions {
             }
         }
         catch (System.Exception e) {
-            Debug.LogWarningFormat("Using ICollidable that isn't a MonoBehaviour! How?/nInner Exception: '{0}'", e);
+            Debug.LogWarningFormat("Using ICollidable that isn't a MonoBehaviour! How?/nInner Exception: '{0}'", e.Message);
         }
     }
 

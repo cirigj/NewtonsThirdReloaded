@@ -12,19 +12,23 @@ namespace AI {
         public float circleRadius;
         public float overheatThresholdMax;
         public float overheatThresholdMin;
+        public float randomLookTimeMin;
+        public float randomLookTimeMax;
 
-        bool lookRandom;
+        float randomLookTime = 0f;
 
         public override void Execute (AIBrain brain) {
+            brain.CeaseFire();
+            randomLookTime -= Time.fixedDeltaTime;
+            if (randomLookTime <= 0f) {
+                brain.LookRandomDirection();
+                randomLookTime = UnityEngine.Random.Range(randomLookTimeMin, randomLookTimeMax);
+            }
+
             if (brain.OverheatAboveThreshold(overheatThresholdMax)) {
-                brain.Stop();
-                if (!lookRandom) {
-                    brain.LookRandomDirection();
-                    lookRandom = true;
-                }
+                brain.Coast();
             }
             else if (!brain.OverheatAboveThreshold(overheatThresholdMin)) {
-                lookRandom = false;
                 brain.WanderAim(circleDistance, circleRadius);
                 brain.Go();
             }
