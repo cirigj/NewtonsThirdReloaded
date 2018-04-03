@@ -28,7 +28,7 @@ public class PowerUp : MonoBehaviour {
     }
 
     public virtual void OnPickup (Ship ship) {
-        throw new System.NotImplementedException();
+        ship.powerUpSound.PlayContinuous();
     }
 
     void Kill () {

@@ -161,8 +161,10 @@ namespace AI {
             brain.ship.DeactivateThruster();
         }
 
-        public static void LookAt (this AIBrain brain, Vector3 pos) {
-            brain.ship.ActivateDrift();
+        public static void LookAt (this AIBrain brain, Vector3 pos, bool brake = false) {
+            if (brake) {
+                brain.ship.ActivateDrift();
+            }
             Vector3 direction = (pos - brain.transform.position).normalized;
             brain.ship.SetTargetYaw(new Vector2(direction.x, direction.z));
         }

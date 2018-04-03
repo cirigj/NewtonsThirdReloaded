@@ -228,13 +228,13 @@ MonoBehaviour:
   playerCollisionPositions: []
   target: {fileID: 0}
   startDistanceMin: 10
-  startDistanceMax: 60
+  startDistanceMax: 80
   spawnFrequency:
     targetNumber: 22
     prefab: {fileID: 114142975514263118, guid: 5623c665a61d27e4a900fafffd4b6e76, type: 2}
   spawnDistanceMin: 45
-  spawnDistanceMax: 60
-  despawnDistance: 80
+  spawnDistanceMax: 80
+  despawnDistance: 160
   yRotationOnly: 0
   spawnTime: 0.2
   spawnRetries: 3
@@ -252,13 +252,13 @@ MonoBehaviour:
   playerCollisionPositions: []
   target: {fileID: 0}
   startDistanceMin: 10
-  startDistanceMax: 60
+  startDistanceMax: 80
   spawnFrequency:
     targetNumber: 9
     prefab: {fileID: 114039847563740572, guid: 5ae0434b662b86744a0466984f77a992, type: 2}
   spawnDistanceMin: 45
-  spawnDistanceMax: 60
-  despawnDistance: 80
+  spawnDistanceMax: 80
+  despawnDistance: 160
   yRotationOnly: 0
   spawnTime: 0.2
   spawnRetries: 3
@@ -276,13 +276,13 @@ MonoBehaviour:
   playerCollisionPositions: []
   target: {fileID: 0}
   startDistanceMin: 10
-  startDistanceMax: 60
+  startDistanceMax: 80
   spawnFrequency:
     targetNumber: 4
     prefab: {fileID: 114353582325654610, guid: 344c0fd918199d949acced2f433a5c5b, type: 2}
   spawnDistanceMin: 45
-  spawnDistanceMax: 60
-  despawnDistance: 80
+  spawnDistanceMax: 80
+  despawnDistance: 160
   yRotationOnly: 0
   spawnTime: 0.2
   spawnRetries: 3
@@ -299,14 +299,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCollisionPositions: []
   target: {fileID: 0}
-  startDistanceMin: 30
-  startDistanceMax: 60
+  startDistanceMin: 50
+  startDistanceMax: 90
   spawnFrequency:
     targetNumber: 3
     prefab: {fileID: 114221077218442272, guid: ee4133bba4b00b24bb56d8ee4af9bd82, type: 2}
-  spawnDistanceMin: 45
-  spawnDistanceMax: 70
-  despawnDistance: 100
+  spawnDistanceMin: 50
+  spawnDistanceMax: 90
+  despawnDistance: 160
   yRotationOnly: 1
   spawnTime: 0.2
   spawnRetries: 3
@@ -324,13 +324,13 @@ MonoBehaviour:
   playerCollisionPositions: []
   target: {fileID: 0}
   startDistanceMin: 10
-  startDistanceMax: 60
+  startDistanceMax: 80
   spawnFrequency:
     targetNumber: 30
     prefab: {fileID: 114661123600500562, guid: 7c9768bdb9d48224d9f53299300e3b81, type: 2}
   spawnDistanceMin: 45
-  spawnDistanceMax: 60
-  despawnDistance: 80
+  spawnDistanceMax: 80
+  despawnDistance: 160
   yRotationOnly: 0
   spawnTime: 0.2
   spawnRetries: 3

@@ -209,6 +209,12 @@ MonoBehaviour:
   damage: 0
   mass: 0
   velocity: {x: 0, y: 0, z: 0}
+  bulletRenderer: {fileID: 23145888240255092}
+  playerBulletMat: {fileID: 2100000, guid: 5e764323b07dd734b9ab38c8f0149fd6, type: 2}
+  enemyBulletMat: {fileID: 2100000, guid: 7bf5057b96ca6e84c8ac424507b6f65c, type: 2}
+  glowLight: {fileID: 108011934934631758}
+  playerGlowColor: {r: 0.49411768, g: 1, b: 0, a: 1}
+  enemyGlowColor: {r: 1, g: 0.24705882, b: 0, a: 1}
 --- !u!136 &136854449951659954
 CapsuleCollider:
   m_ObjectHideFlags: 1

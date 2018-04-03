@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 114785656789616372}
   - component: {fileID: 114167797418549822}
   - component: {fileID: 114972150206233892}
+  - component: {fileID: 114559181781851778}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -141,6 +142,18 @@ MonoBehaviour:
   valueClampMin: 0
   valueClampMax: 50
   randomDistance: 1.25
+--- !u!114 &114559181781851778
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1703014347060958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5454635b58d2d494187adcef121896a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mixer: {fileID: 24100000, guid: 88246fd6c6bcf854fb7820c8cb0dc055, type: 2}
 --- !u!114 &114785656789616372
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -156,6 +169,7 @@ MonoBehaviour:
   textController: {fileID: 114167797418549822}
   shipUI: {fileID: 0}
   gameOverController: {fileID: 114972150206233892}
+  soundController: {fileID: 114559181781851778}
 --- !u!114 &114972150206233892
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -167,7 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80276871bedfdd54e91bb9e71baf0295, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameOverText: {fileID: 0}
+  gameOverGraphics:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   waitTime: 2
   fadeTime: 3
   fadeCurve:

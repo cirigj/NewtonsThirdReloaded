@@ -76,7 +76,7 @@ public class Shield : MonoBehaviour, IShootable, ICollidable {
 
     public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
-            GameController.instance.textController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, ship.shipLayer == Layers.PlayerShip);
+            GameController.Instance.textController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, ship.shipLayer == Layers.PlayerShip);
         }
         TakeDamage(dmg);
     }

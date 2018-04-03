@@ -18,6 +18,8 @@ namespace AI {
         public float spawnRadius;
         public ParticleSystem deathParticles;
 
+        bool _exploded;
+
         public override ISpawner GetParent () {
             return parent;
         }
@@ -50,9 +52,14 @@ namespace AI {
         #endregion
 
         public void Explode () {
-            Instantiate(deathParticles, transform.position, Quaternion.identity);
-            SpawnPowerUps();
-            Destroy(gameObject);
+            if (!_exploded) {
+                var explosion = Instantiate(deathParticles, transform.position, Quaternion.identity);
+                SoundHandler sound = explosion.GetComponent<SoundHandler>();
+                if (sound) sound.Play();
+                SpawnPowerUps();
+                Destroy(gameObject);
+                _exploded = true;
+            }
         }
 
         [Header("Brain Parameters")]
@@ -60,6 +67,7 @@ namespace AI {
         public float awarenessRadius = 10f;
         public float awarenessAngle = 360f;
         public float extrapolationRadius = 25f;
+        public float extrapolationTime = 5f;
         public Color foundColor;
         public Color nearbyColor;
         public Color lostColor;
@@ -73,6 +81,7 @@ namespace AI {
         public Vector3? lastKnownPlayerVelocity;
         public bool playerPositionKnown;
         public bool playerNearby;
+        public float timeSincePlayerPositionKnown;
         FloatingText currentIndicator;
 
         [Header("Drops")]
@@ -84,7 +93,7 @@ namespace AI {
         public Ship playerShip {
             get {
                 if (_playerShip == null) {
-                    _playerShip = GameController.instance.playerShip;
+                    _playerShip = GameController.Instance.playerShip;
                 }
                 return _playerShip;
             }
@@ -118,29 +127,45 @@ namespace AI {
         }
 
         void TrackPlayer () {
-            if (playerShip.health > 0f && !playerShip.cloaked && this.ObjectWithinConeOfVision(playerShip.transform, awarenessRadius, awarenessAngle) && this.PlayerVisible()) {
+
+            timeSincePlayerPositionKnown = Mathf.Clamp(timeSincePlayerPositionKnown + Time.fixedDeltaTime, 0f, extrapolationTime);
+
+            if (playerShip.health > 0f
+              && !playerShip.cloaked
+              && this.ObjectWithinConeOfVision(playerShip.transform, awarenessRadius, awarenessAngle) && this.PlayerVisible()) {
                 extrapolatedPlayerPosition = playerShip.transform.position;
                 lastKnownPlayerVelocity = playerShip.thrustVelocity;
                 PlayerFound();
             }
-            else if (playerShip.health > 0f && extrapolatedPlayerPosition.HasValue && this.PositionWithinRange(extrapolatedPlayerPosition.Value, extrapolationRadius)) {
+
+            else if (timeSincePlayerPositionKnown < extrapolationTime
+              && playerShip.health > 0f
+              && extrapolatedPlayerPosition.HasValue && this.PositionWithinRange(extrapolatedPlayerPosition.Value, extrapolationRadius)) {
                 extrapolatedPlayerPosition = extrapolatedPlayerPosition + lastKnownPlayerVelocity * Time.fixedDeltaTime;
                 PlayerNearby();
             }
+
             else {
                 extrapolatedPlayerPosition = null;
                 lastKnownPlayerVelocity = null;
                 PlayerLost();
             }
+
+        }
+
+        void ResetSearchTimer () {
+            timeSincePlayerPositionKnown = 0f;
         }
 
         void ReactToBullet (Projectile proj) {
             extrapolatedPlayerPosition = transform.position - proj.velocity / 5f;
-            lastKnownPlayerVelocity = playerShip.thrustVelocity;
+            lastKnownPlayerVelocity = proj.velocity.normalized * -playerShip.engine.maxSpeed;
             PlayerNearby(true);
+            ResetSearchTimer();
         }
 
         void PlayerFound () {
+            ResetSearchTimer();
             if (!playerPositionKnown) {
                 SpawnIndicator("!!!", foundColor);
                 playerPositionKnown = true;
@@ -150,7 +175,9 @@ namespace AI {
 
         void PlayerNearby (bool reactionary = false) {
             if ((!reactionary && playerPositionKnown) || (reactionary && !playerNearby)) {
-                SpawnIndicator("!?", nearbyColor);
+                if (playerShip.health > 0f) {
+                    SpawnIndicator("!?", nearbyColor);
+                }
                 playerPositionKnown = false;
                 playerNearby = true;
             }
@@ -171,7 +198,7 @@ namespace AI {
                 currentIndicator.Kill();
                 currentIndicator = null;
             }
-            currentIndicator = GameController.instance.textController.SpawnText(str, transform.position, color, 2, parent: transform);
+            currentIndicator = GameController.Instance.textController.SpawnText(str, transform.position, color, 2, parent: transform);
         }
 
         void SpawnPowerUps () {

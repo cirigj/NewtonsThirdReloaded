@@ -27,6 +27,9 @@ public class Weapon : MonoBehaviour {
     public Vector3 muzzleOffset;
     public Projectile projectilePrefab;
 
+    [Header("Sound")]
+    public SoundHandler sound;
+
     [Header("Runtime")]
     public float cooldown;
 
@@ -52,6 +55,7 @@ public class Weapon : MonoBehaviour {
         proj.mass = projectileMass;
         proj.gameObject.layer = Convert.ToInt32(bulletLayer);
         cooldown = 1f / fireRate;
+        sound.Play();
     }
 
     public Vector3 GetKickback (float shipMass) {

@@ -23,6 +23,9 @@ public class Engine : MonoBehaviour {
     public float ramMaxSpeedMultiplier;
     public float ramSpeedFalloff;
 
+    [Header("Sound")]
+    public SoundHandler sound;
+
     [Header("Runtime")]
     public float overheat;
     public float cooldown;
@@ -77,10 +80,12 @@ public class Engine : MonoBehaviour {
 
     public void TurnOnParticles () {
         particles.ForEach(p => p.Play());
+        if (sound) sound.PlayContinuous();
     }
 
     public void TurnOffParticles () {
         particles.ForEach(p => p.Stop());
+        if (sound) sound.Stop();
     }
 
     public void PlayParticleBurst () {

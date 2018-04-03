@@ -115,11 +115,15 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     public float damageReductionModifier;
     public float elasticity;
     public float collisionRadius;
+    public SoundHandler damageSound;
 
     [Header("Particles")]
     public ParticleSystem healthParticles;
     public ParticleSystem armorParticles;
     public ParticleSystem coolantParticles;
+
+    [Header("Sound")]
+    public SoundHandler powerUpSound;
 
     List<Weapon> weapons;
     IKillable killable;
@@ -372,8 +376,13 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
     }
 
     public void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
+        float dmgReduction = fromProjectile ? projectileDamageReduction : damageReductionModifier;
+        if (armor > 0f) {
+            dmg = CalculateArmorDamageReduction(dmg);
+            dmgReduction = 1 - ((1 - dmgReduction) * (1 - GameController.armorDamageReduction));
+        }
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
-            GameController.instance.textController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos, shipLayer == Layers.PlayerShip);
+            GameController.Instance.textController.SpawnDamageNumber(dmg, dmgReduction, dmgPos, shipLayer == Layers.PlayerShip);
         }
         TakeDamage(dmg);
     }
@@ -690,6 +699,10 @@ public class Ship : MonoBehaviour, IShootable, ICollidable {
 
     public float CalculateProjectileDamageReduction (float dmg) {
         return Mathf.Clamp(dmg - dmg * projectileDamageReduction, 0f, Mathf.Infinity);
+    }
+
+    public float CalculateArmorDamageReduction (float dmg) {
+        return Mathf.Clamp(dmg - dmg * GameController.armorDamageReduction, 0f, Mathf.Infinity);
     }
 
     #endregion

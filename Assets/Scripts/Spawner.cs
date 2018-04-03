@@ -78,7 +78,7 @@ public class Spawner : ISpawner {
                 objects.Add(newObject);
             }
             if (stagger) {
-                yield return null;
+                yield return new WaitForFixedUpdate();
             }
         }
         spawnRoutine = null;

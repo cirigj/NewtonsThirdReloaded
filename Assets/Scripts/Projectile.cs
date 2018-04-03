@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Projectile : MonoBehaviour {
@@ -9,6 +10,25 @@ public class Projectile : MonoBehaviour {
     public float damage;
     public float mass;
     public Vector3 velocity;
+
+    [Header("Visual")]
+    public Renderer bulletRenderer;
+    public Material playerBulletMat;
+    public Material enemyBulletMat;
+    public Light glowLight;
+    public Color playerGlowColor;
+    public Color enemyGlowColor;
+
+    void Start () {
+        if (gameObject.layer == Convert.ToInt32(Layers.PlayerBullet)) {
+            bulletRenderer.material = playerBulletMat;
+            glowLight.color = playerGlowColor;
+        }
+        if (gameObject.layer == Convert.ToInt32(Layers.EnemyBullet)) {
+            bulletRenderer.material = enemyBulletMat;
+            glowLight.color = enemyGlowColor;
+        }
+    }
 
     void FixedUpdate () {
         transform.position += velocity * Time.fixedDeltaTime;

@@ -23,6 +23,8 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
     public float breakApartSpeedMultiplierMin;
     public float breakApartSpeedMultiplierMax;
     public float breakApartDistanceMultiplier;
+    public float breakApartShinyChanceMultiplier;
+    public float breakApartShinyChainChance;
 
     [Header("Visual")]
     public ParticleSystem particles;
@@ -41,10 +43,27 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
     public float damageReductionModifier;
     public float elasticity;
     public Collider collider;
+    public SoundHandler damageSound;
+
+    [Header("Treasure")]
+    [Range(0f, 1f)]
+    public float shinyChance;
+
+    public Renderer asteroidRenderer;
+    public Material normalMaterial;
+
+    public Material shinyMaterial;
+    public bool isShiny;
+    public ParticleSystem sparkles;
+
+    public float extraHealth;
 
     protected bool destroyed;
 
     protected virtual void Start () {
+        if (Random.Range(0f, 1f) < shinyChance) {
+            SetShiny();
+        }
         if (collider == null) {
             collider = GetComponent<Collider>();
         }
@@ -53,6 +72,13 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
             startSpeedSet = true;
         }
         rotationSpeed = Quaternion.Slerp(Quaternion.identity, Random.rotation, Time.fixedDeltaTime * rotationMultiplier);
+    }
+
+    void SetShiny () {
+        sparkles.Play();
+        asteroidRenderer.material = shinyMaterial;
+        isShiny = true;
+        health += extraHealth;
     }
 
     void FixedUpdate () {
@@ -77,7 +103,7 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
 
     public virtual void TakeDamage (float dmg, bool fromProjectile, Vector3 dmgPos) {
         if (fromProjectile || Mathf.RoundToInt(dmg) > 0) {
-            GameController.instance.textController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos);
+            GameController.Instance.textController.SpawnDamageNumber(dmg, fromProjectile ? projectileDamageReduction : damageReductionModifier, dmgPos);
         }
         TakeDamage(dmg);
     }
@@ -110,17 +136,19 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
 
     public override void PostDespawn (bool calledParent) {
         if (calledParent) {
-            StartCoroutine(DespawnAfterParticles());
+            Explode();
         }
         else {
             Destroy(gameObject);
         }
     }
 
-    IEnumerator DespawnAfterParticles () {
+    void Explode () {
         model.SetActive(false);
-        particles.Play();
-        yield return new WaitForSeconds(destroyWaitTime);
+        ParticleSystem explosion = Instantiate(particles, transform.position, Quaternion.identity);
+        explosion.Play();
+        SoundHandler sound = explosion.GetComponent<SoundHandler>();
+        if (sound) sound.Play();
         Destroy(gameObject);
     }
 
@@ -138,6 +166,12 @@ public class Asteroid : ISpawnable, IShootable, ICollidable, IKillable {
                     child.parent = parent.GetBreakApartParent();
                     child.parent.AddObject(child);
                     child.startSpeedSet = true;
+                    if (i == 0 && isShiny) {
+                        child.shinyChance = 1f;  //guarantee at least one shiny child asteroid
+                    }
+                    else {
+                        child.shinyChance = isShiny ? breakApartShinyChainChance : child.shinyChance * breakApartShinyChanceMultiplier;
+                    }
                 }
             }
             Destroy(collider);

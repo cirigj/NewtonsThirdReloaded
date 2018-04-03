@@ -16,7 +16,7 @@ namespace AI {
             Vector3? hitNormal;
             Vector3? hitPos = brain.ObstacleAhead(lookAhead, out hitNormal);
             if (hitPos.HasValue && hitNormal.HasValue) {
-                brain.LookAt(hitPos.Value + hitNormal.Value.normalized * normalMultiplier);
+                brain.LookAt(hitPos.Value + hitNormal.Value.normalized * normalMultiplier, true);
             }
 
         }

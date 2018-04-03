@@ -119,9 +119,11 @@ public class PlayerShipController : MonoBehaviour, IKillable {
     }
 
     public void Kill() {
-        Instantiate(deathParticles, transform.position, Quaternion.identity);
+        var explosion = Instantiate(deathParticles, transform.position, Quaternion.identity);
+        SoundHandler sound = explosion.GetComponent<SoundHandler>();
+        if (sound) sound.Play();
         gameObject.SetActive(false);
-        GameController.instance.GameOver();
+        GameController.Instance.GameOver();
     }
 
 }
